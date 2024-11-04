@@ -46,10 +46,11 @@
             .logout-button {
                 margin-top: 20px;
                 padding: 10px;
-                background-color: red;
+                background-color: rgb(158, 24, 24);
                 color: white;
                 border: none;
                 cursor: pointer;
+                border-radius: 10px;
             }
 
             .w-100px {
@@ -265,6 +266,95 @@
                 height: calc(100% - 80px);
                 /* Adjust height as needed */
             }
+
+            .min-w-150px {
+                min-width: 150px;
+            }
+
+            .text-red-600 {
+                color: #dc2626;
+                /* Red color */
+            }
+
+            .text-gray-600 {
+                color: #4b5563;
+                /* Gray color */
+            }
+
+            .rounded-full {
+                border-radius: 50%;
+            }
+
+            .mr-2 {
+                margin-right: 0.5rem;
+                /* 8px */
+            }
+
+            .p-2 {
+                padding: 0.5rem;
+                /* 8px */
+            }
+
+            .text-left {
+                text-align: left;
+            }
+
+            #messageInputContainer {
+                box-sizing: border-box;
+                width: 100%;
+            }
+
+            button {
+                cursor: pointer;
+                box-shadow: none;
+                border: none;
+                outline: none;
+                /* Optional: if you want to remove the background as well */
+            }
+
+            button:active {
+                transform: translateY(1px);
+            }
+
+            /* Custom scrollbar styles */
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 12px;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background-color: #888;
+                border-radius: 10px;
+                border: 3px solid #f1f1f1;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+
+            .px-2 {
+                padding-left: 0.5rem;
+                /* 16px */
+                padding-right: 0.5rem;
+                /* 16px */
+            }
+
+            .py-1 {
+                padding-top: 0.2rem;
+                /* 8px */
+                padding-bottom: 0.2rem;
+                /* 8px */
+            }
+
+            .my-1 {
+                margin-top: 0.5rem;
+                /* 8px */
+                margin-bottom: 0.5rem;
+                /* 8px */
+            }
         </style>
     </head>
 
@@ -440,17 +530,45 @@
 
                 if (history.length > 0) {
                     const historyTitle = document.createElement('h2')
-                    historyTitle.textContent = 'Pilih dari Riwayat:'
+                    historyTitle.textContent = 'Pilih Pacar:'
                     historyContainer.appendChild(historyTitle)
 
                     const historyList = document.createElement('div')
                     historyList.className = 'history-list'
 
-                    history.forEach(item => {
+                    history.forEach((item, index) => {
+                        console.log(`https://chat.pacar-ai.my.id${item.avatar}`)
                         const historyItem = document.createElement('button')
-                        historyItem.className = 'history-item'
-                        historyItem.textContent = item.name
+                        historyItem.className = 'flex items-center px-2 py-1 my-1 rounded bg-gray-200'
                         historyItem.onclick = () => handleHistorySelect(item)
+                        const avatar = document.createElement('img')
+                        avatar.src = `https://chat.pacar-ai.my.id${item.avatar}`
+                        avatar.alt = `Avatar ${index + 1}`
+                        avatar.width = 60
+                        avatar.height = 60
+                        avatar.className = 'rounded-full mr-2'
+
+                        const nameContainer = document.createElement('div')
+                        nameContainer.className = 'p-2 text-left min-w-150px'
+                        const name = document.createElement('div')
+                        name.textContent = item.name
+                        const status = document.createElement('div')
+                        status.className = 'text-sm text-red-600'
+                        status.textContent = `${item.status} ${item.character}`
+                        nameContainer.appendChild(name)
+                        nameContainer.appendChild(status)
+
+                        const descriptionContainer = document.createElement('div')
+                        descriptionContainer.className = 'p-2 text-left'
+                        const description = document.createElement('div')
+                        description.className = 'text-sm text-gray-600'
+                        description.textContent = item.description
+                        descriptionContainer.appendChild(description)
+
+                        historyItem.appendChild(avatar)
+                        historyItem.appendChild(nameContainer)
+                        historyItem.appendChild(descriptionContainer)
+
                         historyList.appendChild(historyItem)
                     })
 
@@ -540,7 +658,7 @@
 
                         if (msg.role === 'assistant') {
                             const avatarImg = document.createElement('img')
-                            avatarImg.src = `https://chat.pacar-ai.my.id/_next/image?url=${localStorage.getItem("avatar")}&w=64&q=75` // Replace with actual avatar path
+                            avatarImg.src = `https://chat.pacar-ai.my.id${localStorage.getItem("avatar")}` // Replace with actual avatar path
                             avatarImg.alt = 'Pacar Avatar'
                             avatarImg.className = 'w-50px h-50px rounded-full mr-2'
                             messageDiv.appendChild(avatarImg)

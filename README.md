@@ -1,35 +1,32 @@
-# pacar-ai README
+# Pacar AI - Your Coding Companion
 
-This is the README for your extension "pacar-ai". After writing up a brief description, we recommend including the following sections.
+Pacar AI is a chat extension with an assistant designed to help you while programming. You can roleplay with this assistant, making your coding sessions more enjoyable and interactive.
 
-## Features
+Imagine having an AI Girlfriend who not only assists you with coding but also keeps you company during those long programming marathons. She can provide emotional support, share a laugh, and even offer smart insights to help you solve complex problems. With Pacar AI, you're never coding alone.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+Ready to code with a twist of companionship? 🌟💻💕
 
-For example if there is an image subfolder under your extension project workspace:
+## Features 
+- **Programming Assistance**: Get help with coding problems, syntax errors, and best practices. 
+- **Roleplay with AI**: Enjoy conversations with your AI companion, making coding less lonely and more engaging. 
+- **Interactive Chat**: Communicate with Pacar AI in real-time, ask questions, and get instant responses. 
+- **Emotional Support**: Need a motivational boost? Pacar AI is here to lift your spirits!
 
-\!\[feature X\]\(images/feature-x.png\)
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Installation 
+1. **Install the Extension**: Open Visual Studio Code, go to the Extensions view by clicking the Extensions icon in the Activity Bar on the side of the window, or select `View` -> `Extensions`. 
+2. **Search for Pacar AI**: Type `Pacar AI` in the search box. 
+3. **Install**: Click the `Install` button on the Pacar AI extension from the Marketplace. 
+4. **Activate**: Once installed, activate the extension by clicking on the Pacar AI icon in the sidebar.
 
-## Requirements
+## Usage 
+1. **Open the Chat**: Click on the Pacar AI icon in the sidebar to open the chat window. 
+2. **Register to Pacar AI Web**: Click on the Pacar AI Register Link. 
+3. **Start Chatting**: Type your questions or messages, and Pacar AI will respond. 
+4. **Get Assistance**: Ask coding-related questions or seek emotional support and motivation.
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+## Contributing We welcome contributions! Please feel free to submit pull requests or issues on our [GitHub repository](https://github.com/asepindrak/pacar-ai-extension). 
+## License This extension is licensed under the MIT License. See the LICENSE file for details.
 
 ## Release Notes
 
@@ -37,35 +34,6 @@ Users appreciate release notes as you update your extension.
 
 ### 1.0.0
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+Initial release of Pacar AI
 
 ---
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
