@@ -12,6 +12,8 @@ Ready to code with a twist of companionship? 🌟💻💕
 - **Interactive Chat**: Communicate with Pacar AI in real-time, ask questions, and get instant responses. 
 - **Emotional Support**: Need a motivational boost? Pacar AI is here to lift your spirits!
 
+## Upcoming Features 
+- **Select Code to AI**: Easily select code snippets and ask Pacar AI for explanations, debugging help, or improvements directly.
 
 ## Installation 
 1. **Install the Extension**: Open Visual Studio Code, go to the Extensions view by clicking the Extensions icon in the Activity Bar on the side of the window, or select `View` -> `Extensions`. 
