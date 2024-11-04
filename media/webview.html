@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pacar AI Chat</title>
+        <style>
+            body,
+            html {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+
+            iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+            }
+
+            .message {
+                margin-top: 10px;
+                font-size: 14px;
+            }
+
+            .success {
+                color: green;
+            }
+
+            .error {
+                color: red;
+            }
+
+            .history-container {
+                padding: 10px;
+            }
+
+            .history-item {
+                display: block;
+                margin: 5px 0;
+            }
+
+            .logout-button {
+                margin-top: 20px;
+                padding: 10px;
+                background-color: red;
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
+
+            .w-100px {
+                width: 100px;
+            }
+
+            .h-100px {
+                height: 100px;
+            }
+
+            .rounded-full {
+                border-radius: 50%;
+            }
+
+            .mr-2 {
+                margin-right: 0.5rem;
+                /* 8px */
+            }
+
+            /* Utility classes */
+            .flex {
+                display: flex;
+            }
+
+            .flex-grow {
+                flex-grow: 1;
+            }
+
+            .overflow-y-auto {
+                overflow-y: auto;
+            }
+
+            .p-4 {
+                padding: 1rem;
+                /* 16px */
+            }
+
+            .bg-chat {
+                background-color: #f3f4f6;
+                /* Light gray background */
+            }
+
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: #888;
+            }
+
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+
+            .mb-2 {
+                margin-bottom: 0.5rem;
+                /* 8px */
+            }
+
+            .justify-end {
+                justify-content: flex-end;
+            }
+
+            .justify-start {
+                justify-content: flex-start;
+            }
+
+            .w-50px {
+                width: 50px;
+            }
+
+            .h-50px {
+                height: 50px;
+            }
+
+            .inline-block {
+                display: inline-block;
+            }
+
+            .p-2 {
+                padding: 0.5rem;
+                /* 8px */
+            }
+
+            .rounded-lg {
+                border-radius: 0.5rem;
+                /* 8px */
+            }
+
+            .bg-blue-500 {
+                background-color: #3b82f6;
+                /* Blue */
+            }
+
+            .text-white {
+                color: white;
+            }
+
+            .bg-gray-300 {
+                background-color: #d1d5db;
+                /* Light gray */
+            }
+
+            .bg-gray-800 {
+                background-color: #1f2937;
+                /* Dark gray */
+            }
+
+            .mt-2 {
+                margin-top: 0.5rem;
+                /* 8px */
+            }
+
+            .px-2 {
+                padding-left: 0.5rem;
+                /* 8px */
+                padding-right: 0.5rem;
+                /* 8px */
+            }
+
+            .py-1 {
+                padding-top: 0.25rem;
+                /* 4px */
+                padding-bottom: 0.25rem;
+                /* 4px */
+            }
+
+            .text-grey {
+                color: #555;
+            }
+
+            .bg-white {
+                background-color: white;
+            }
+
+            .shadow-md {
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .items-center {
+                align-items: center;
+            }
+
+            .border {
+                border-width: 1px;
+            }
+
+            .border-gray-300 {
+                border-color: #d1d5db;
+            }
+
+            .focus\:outline-none {
+                outline: none;
+            }
+
+            .focus\:ring-2 {
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+            }
+
+            .focus\:ring-blue-500 {
+                box-shadow: 0 0 0 2px #3b82f6;
+            }
+
+            .resize-none {
+                resize: none;
+            }
+
+            .h-12 {
+                height: 3rem;
+                /* 48px */
+            }
+
+            .ml-2 {
+                margin-left: 0.5rem;
+                /* 8px */
+            }
+
+            .hover\:bg-blue-600:hover {
+                background-color: #2563eb;
+            }
+
+            .rounded {
+                border-radius: 0.25rem;
+                /* 4px */
+            }
+
+            .h-4 {
+                height: 1rem;
+                /* 16px */
+            }
+
+            .w-4 {
+                width: 1rem;
+                /* 16px */
+            }
+
+            .fixed-bottom {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+            }
+
+            .content {
+                margin-top: 10px;
+                font-size: 14px;
+                overflow-y: auto;
+                height: calc(100% - 80px);
+                /* Adjust height as needed */
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="content" class="content"></div>
+        <div id="message" class="message"></div>
+        <div id="messageInputContainer" class="p-4 bg-white shadow-md fixed-bottom" style="display: none;">
+            <div class="flex items-center">
+                <textarea id="messageInput" placeholder="Type your message..."
+                    class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none h-12"
+                    rows="1"></textarea>
+                <button id="sendMessageButton"
+                    class="ml-2 h-12 p-2 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded">
+                    <svg class="h-4 w-4 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const token = localStorage.getItem('token')
+                const userId = localStorage.getItem('userId')
+                if (token && userId) {
+                    fetchHistory(userId)
+                } else {
+                    showLoginForm()
+                }
+                const sendMessageButton = document.getElementById('sendMessageButton')
+                sendMessageButton.addEventListener('click', handleSendMessage)
+
+                const messageInput = document.getElementById('messageInput')
+                messageInput.addEventListener('keydown', handleKeyDown)
+            })
+
+            function handleKeyDown(event) {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault()
+                    handleSendMessage()
+                }
+            }
+
+            async function handleSendMessage() {
+                const messageInput = document.getElementById('messageInput')
+                const message = messageInput.value.trim()
+                console.log('Sending message:', message)
+
+                if (!message) return
+
+                const content = document.getElementById('content')
+                content.innerHTML = 'Sending message...'
+                const historyId = localStorage.getItem('historyId')
+                const userId = localStorage.getItem('userId')
+                const character = localStorage.getItem('character')
+
+                const data = {
+                    historyId,
+                    userId,
+                    character,
+                    message
+                }
+
+                try {
+                    const response = await fetch('https://chat.pacar-ai.my.id/api/messages', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+
+                    if (!response.ok) {
+                        throw new Error('Failed to send message')
+                    }
+
+                    const newMessage = await response.json()
+                    // displayMessages([newMessage])
+                    messageInput.value = ''
+                    loadMessages(historyId)
+                } catch (error) {
+                    console.error('Error sending message:', error)
+                }
+            }
+
+            function showLoginForm() {
+                const content = document.getElementById('content')
+                content.innerHTML = `
+      <form id="loginForm" action="#" method="post">
+        <input type="text" name="email" placeholder="Masukkan email" value="sikassep@gmail.com" />
+        <input type="password" name="password" placeholder="Masukkan password" value="qwertieser" />
+        <button type="submit">Login</button>
+      </form>
+      <a href="https://pacar-ai.my.id/" target="_blank">Register</a>
+    `
+                const form = document.getElementById('loginForm')
+                form.addEventListener('submit', login)
+            }
+
+            async function login(event) {
+                event.preventDefault() // Mencegah form dari submit default
+
+                const email = event.target.email.value
+                const password = event.target.password.value
+                const messageDiv = document.getElementById('message')
+
+                try {
+                    const response = await fetch('https://chat.pacar-ai.my.id/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    })
+
+                    if (!response.ok) {
+                        console.log("login gagal")
+                        messageDiv.textContent = 'Email atau password salah.'
+                        messageDiv.className = 'message error'
+                        throw new Error('Login gagal')
+                    }
+
+                    console.log("login berhasil")
+                    const data = await response.json()
+                    console.log("token", data.token)
+                    localStorage.setItem('token', data.token)
+                    localStorage.setItem('userId', data.userId)
+
+                    messageDiv.textContent = 'Login berhasil!'
+                    messageDiv.className = 'message success'
+
+                    // Fetch and display chat history
+                    fetchHistory(data.userId)
+                } catch (error) {
+                    messageDiv.textContent = 'Email atau password salah.'
+                    messageDiv.className = 'message error'
+                }
+            }
+
+            async function fetchHistory(userId) {
+                try {
+                    const response = await fetch(`https://chat.pacar-ai.my.id/api/character/?userId=${userId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch history')
+                    }
+
+                    const historyData = await response.json()
+                    console.log(historyData)
+                    displayHistory(historyData)
+                } catch (error) {
+                    console.error('Error fetching history:', error)
+                    document.getElementById('message').textContent = 'Gagal mengambil riwayat chat.'
+                    document.getElementById('message').className = 'message error'
+
+                    // Perform logout
+                    logout()
+                }
+            }
+
+            function displayHistory(history) {
+                const content = document.getElementById('content')
+                content.innerHTML = ''
+
+                const historyContainer = document.createElement('div')
+                historyContainer.className = 'history-container'
+
+                if (history.length > 0) {
+                    const historyTitle = document.createElement('h2')
+                    historyTitle.textContent = 'Pilih dari Riwayat:'
+                    historyContainer.appendChild(historyTitle)
+
+                    const historyList = document.createElement('div')
+                    historyList.className = 'history-list'
+
+                    history.forEach(item => {
+                        const historyItem = document.createElement('button')
+                        historyItem.className = 'history-item'
+                        historyItem.textContent = item.name
+                        historyItem.onclick = () => handleHistorySelect(item)
+                        historyList.appendChild(historyItem)
+                    })
+
+                    historyContainer.appendChild(historyList)
+                } else {
+                    const noHistoryMessage = document.createElement('p')
+                    noHistoryMessage.textContent = 'Tidak ada riwayat chat. Silahkan login dulu di website kami.'
+                    historyContainer.appendChild(noHistoryMessage)
+
+                    // Display login link if no chat history
+                    const loginLink = document.createElement('a')
+                    loginLink.href = 'https://chat.pacar-ai.my.id/'
+                    loginLink.textContent = 'Login to chat'
+                    historyContainer.appendChild(loginLink)
+
+                    const relogin = document.createElement('p')
+                    relogin.textContent = 'Jika sudah login silahkan tutup dahulu tab ini dan buka kembali'
+                    historyContainer.appendChild(relogin)
+                }
+
+                const logoutButton = document.createElement('button')
+                logoutButton.className = 'logout-button'
+                logoutButton.textContent = 'Logout'
+                logoutButton.onclick = logout
+                historyContainer.appendChild(logoutButton)
+
+                content.appendChild(historyContainer)
+            }
+
+            async function handleHistorySelect(item) {
+                console.log('Selected history ID:', item.id)
+                localStorage.setItem('historyId', item.id)
+                localStorage.setItem('character', item.character)
+                console.log('Selected avatar:', item.avatar)
+                localStorage.setItem('avatar', item.avatar)
+                loadMessages(item.id)
+            }
+
+
+
+            async function loadMessages(historyId) {
+                const content = document.getElementById('content')
+                content.innerHTML = 'Loading...'
+
+                try {
+                    const response = await fetch(`https://chat.pacar-ai.my.id/api/messages?historyId=${historyId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch messages')
+                    }
+
+                    const messages = await response.json()
+                    displayMessages(messages)
+
+                    // Show the message input container
+                    const messageInputContainer = document.getElementById('messageInputContainer')
+                    messageInputContainer.style.display = 'block'
+
+                    // Scroll to the bottom of the content
+                    content.scrollTop = content.scrollHeight
+
+                } catch (error) {
+                    console.error('Error fetching messages:', error)
+                    content.innerHTML = 'Failed to load messages.'
+                }
+            }
+
+            function displayMessages(messages) {
+                const content = document.getElementById('content')
+                content.innerHTML = ''
+
+                const chatContainer = document.createElement('div')
+                chatContainer.className = 'flex-grow overflow-y-auto p-4 bg-chat custom-scrollbar'
+
+                messages.forEach((msg, index) => {
+                    if (msg.role !== 'system') {
+                        const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`)/g)
+
+                        const messageDiv = document.createElement('div')
+                        messageDiv.className = `mb-2 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`
+
+                        if (msg.role === 'assistant') {
+                            const avatarImg = document.createElement('img')
+                            avatarImg.src = `https://chat.pacar-ai.my.id/_next/image?url=${localStorage.getItem("avatar")}&w=64&q=75` // Replace with actual avatar path
+                            avatarImg.alt = 'Pacar Avatar'
+                            avatarImg.className = 'w-50px h-50px rounded-full mr-2'
+                            messageDiv.appendChild(avatarImg)
+                        }
+
+                        const messageContent = document.createElement('div')
+                        messageContent.className = `inline-block p-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-grey'}`
+                        messageContent.style.whiteSpace = 'pre-wrap'
+
+                        parts.forEach((part, i) => {
+                            if (part.startsWith('```') && part.endsWith('```')) {
+                                const codeContent = part.slice(3, -3).trim()
+                                const codeLines = codeContent.split('\n')
+                                const language = codeLines[0].trim()
+                                const code = codeLines.slice(1).join('\n').trim()
+
+                                const codeDiv = document.createElement('div')
+                                codeDiv.className = 'bg-gray-800 text-white p-2 rounded-lg mb-2'
+
+                                const pre = document.createElement('pre')
+                                pre.textContent = code
+                                codeDiv.appendChild(pre)
+
+                                const copyButton = document.createElement('button')
+                                copyButton.textContent = 'Copy'
+                                copyButton.className = 'mt-2 bg-blue-500 text-white px-2 py-1 rounded'
+                                copyButton.onclick = () => handleCopy(code)
+                                codeDiv.appendChild(copyButton)
+
+                                messageContent.appendChild(codeDiv)
+                            } else if (part.startsWith('`') && part.endsWith('`')) {
+                                const inlineCode = part.slice(1, -1)
+                                const codeSpan = document.createElement('code')
+                                codeSpan.className = 'bg-gray-800 text-white p-1 rounded'
+                                codeSpan.textContent = inlineCode
+                                messageContent.appendChild(codeSpan)
+                            } else {
+                                const textSpan = document.createElement('span')
+                                textSpan.textContent = part
+                                messageContent.appendChild(textSpan)
+                            }
+                        })
+
+                        messageDiv.appendChild(messageContent)
+                        chatContainer.appendChild(messageDiv)
+                    }
+                })
+
+                content.appendChild(chatContainer)
+            }
+
+            function handleCopy(code) {
+                navigator.clipboard.writeText(code).then(() => {
+                    alert('Copied!')
+                })
+            }
+
+            function logout() {
+                localStorage.removeItem('token')
+                localStorage.removeItem('userId')
+                showLoginForm()
+            }
+        </script>
+    </body>
+
+</html>
