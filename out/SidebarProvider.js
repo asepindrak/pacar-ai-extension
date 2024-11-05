@@ -29,9 +29,11 @@ const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 class SidebarProvider {
     _extensionUri;
+    context;
     _view;
-    constructor(_extensionUri) {
+    constructor(_extensionUri, context) {
         this._extensionUri = _extensionUri;
+        this.context = context;
     }
     resolveWebviewView(webviewView, context, _token) {
         this._view = webviewView;
@@ -51,6 +53,14 @@ class SidebarProvider {
             }
         });
         webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
+        webviewView.webview.onDidReceiveMessage(message => {
+            switch (message.type) {
+                case 'saveToken':
+                    // Simpan token di globalState
+                    this.context.globalState.update('token', message.token);
+                    return;
+            }
+        }, undefined, this.context.subscriptions);
     }
     getHtmlForWebview(webview) {
         const htmlPath = path.join(this._extensionUri.fsPath, 'media', 'webview.html');

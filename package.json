@@ -46,6 +46,13 @@
         "command": "pacar-ai.helloWorld",
         "title": "Hello World"
       }
+    ],
+    "keybindings": [
+      {
+        "command": "pacar-ai.triggerCompletion",
+        "key": "enter",
+        "when": "editorTextFocus"
+      }
     ]
   },
   "scripts": {

@@ -486,7 +486,7 @@
                     const messageInput = document.getElementById('messageInput')
                     let message = messageInput.value.trim()
                     if (coding) {
-                        message = message + " : " + "```" + coding + "```"
+                        message = message + " : " + "[selection]```" + coding + "```[selection]"
                     }
 
                     if (!message) return
@@ -510,7 +510,7 @@
             }
 
             async function sendMessageToApi(message) {
-                console.log("message", message)
+
                 const historyId = localStorage.getItem('historyId')
                 const userId = localStorage.getItem('userId')
                 const character = localStorage.getItem('character')
@@ -587,9 +587,11 @@
 
                     console.log("login berhasil")
                     const data = await response.json()
-                    console.log("token", data.token)
+
                     localStorage.setItem('token', data.token)
                     localStorage.setItem('userId', data.userId)
+                    const token = data.token
+                    vscode.postMessage({ type: 'saveToken', token })
 
                     messageDiv.textContent = 'Login berhasil!'
                     messageDiv.className = 'message success'
@@ -617,7 +619,7 @@
                     }
 
                     const historyData = await response.json()
-                    console.log(historyData)
+
                     displayHistory(historyData)
                 } catch (error) {
                     console.error('Error fetching history:', error)
@@ -646,7 +648,7 @@
                     historyList.className = 'history-list'
 
                     history.forEach((item, index) => {
-                        console.log(`https://chat.pacar-ai.my.id${item.avatar}`)
+
                         const historyItem = document.createElement('button')
                         historyItem.className = 'flex items-center px-2 py-1 my-1 rounded bg-gray-200'
                         historyItem.onclick = () => handleHistorySelect(item)
@@ -708,10 +710,10 @@
             }
 
             async function handleHistorySelect(item) {
-                console.log('Selected history ID:', item.id)
+
                 localStorage.setItem('historyId', item.id)
                 localStorage.setItem('character', item.character)
-                console.log('Selected avatar:', item.avatar)
+
                 localStorage.setItem('avatar', item.avatar)
                 loadMessages(item.id)
             }
@@ -760,7 +762,8 @@
 
                 messages.forEach((msg, index) => {
                     if (msg.role !== 'system') {
-                        const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`)/g)
+
+                        const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`|\[selection\][\s\S]*?\[selection\])/g)
 
                         const messageDiv = document.createElement('div')
                         messageDiv.className = `mb-2 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`
@@ -778,11 +781,18 @@
                         messageContent.style.whiteSpace = 'pre-wrap'
 
                         parts.forEach((part, i) => {
-                            if (part.startsWith('```') && part.endsWith('```')) {
+                            if (part.startsWith('[selection]') && part.endsWith('[selection]')) {
+                                const codeSpan = document.createElement('code')
+                                codeSpan.className = 'bg-gray-800 text-white p-1 rounded'
+                                codeSpan.textContent = 'code'
+                                messageContent.appendChild(codeSpan)
+                            } else if (part.startsWith('```') && part.endsWith('```')) {
                                 let codeContent = part.slice(3, -3).trim()
+
+
                                 const codeLines = codeContent.split('\n')
                                 const firstLine = codeLines[0].trim()
-                                const languageRegex = /^(javascript|python|java|c\+\+|c#|ruby|go|php|typescript|swift|kotlin)$/i
+                                const languageRegex = /^(javascript|python|java|c\+\+|c#|ruby|go|php|typescript|swift|kotlin|json|jsx|tsx)$/i
 
                                 if (languageRegex.test(firstLine)) {
                                     codeContent = codeLines.slice(1).join('\n').trim() // Remove the first line if it matches a language
@@ -814,7 +824,7 @@
                                 messageContent.appendChild(textSpan)
                             }
                         })
-                        console.log("messageContent", messageContent)
+
                         messageDiv.appendChild(messageContent)
                         chatContainer.appendChild(messageDiv)
                     }

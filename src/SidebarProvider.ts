@@ -5,7 +5,7 @@ import * as fs from 'fs';
 export class SidebarProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
 
-  constructor(private readonly _extensionUri: vscode.Uri) { }
+  constructor(private readonly _extensionUri: vscode.Uri, private readonly context: vscode.ExtensionContext) { }
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -32,6 +32,19 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     });
 
     webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
+
+    webviewView.webview.onDidReceiveMessage(
+      message => {
+        switch (message.type) {
+          case 'saveToken':
+            // Simpan token di globalState
+            this.context.globalState.update('token', message.token);
+            return;
+        }
+      },
+      undefined,
+      this.context.subscriptions
+    );
   }
 
   private getHtmlForWebview(webview: vscode.Webview): string {
