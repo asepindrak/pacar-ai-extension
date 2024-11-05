@@ -42,7 +42,7 @@ class SidebarProvider {
         webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
     }
     getHtmlForWebview(webview) {
-        const htmlPath = path.join(this._extensionUri.fsPath, 'src', 'webview.html');
+        const htmlPath = path.join(this._extensionUri.fsPath, 'media', 'webview.html');
         let htmlContent = fs.readFileSync(htmlPath, 'utf8');
         const logoPath = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'logo.png')));
         // Replace placeholder with actual logo path htmlContent = htmlContent.replace('%LOGO_PATH%', logoPath.toString());

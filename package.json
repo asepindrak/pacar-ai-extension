@@ -2,7 +2,7 @@
   "name": "pacar-ai",
   "displayName": "pacar-ai",
   "description": "Pacar AI is a chat extension with an assistant designed to help you while programming. You can roleplay with this assistant, making your coding sessions more enjoyable and interactive. Imagine having an AI Girlfriend who not only assists you with coding but also keeps you company during those long programming marathons. She can provide emotional support, share a laugh, and even offer smart insights to help you solve complex problems. With Pacar AI, you're never coding alone. Ready to code with a twist of companionship? 🌟💻💕",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "PacarAI",
   "repository": {
     "type": "git",
