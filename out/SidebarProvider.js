@@ -24,6 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SidebarProvider = void 0;
+const vscode = __importStar(require("vscode"));
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 class SidebarProvider {
@@ -41,8 +42,11 @@ class SidebarProvider {
         webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
     }
     getHtmlForWebview(webview) {
-        const htmlPath = path.join(this._extensionUri.fsPath, 'media', 'webview.html');
-        const htmlContent = fs.readFileSync(htmlPath, 'utf8');
+        const htmlPath = path.join(this._extensionUri.fsPath, 'src', 'webview.html');
+        let htmlContent = fs.readFileSync(htmlPath, 'utf8');
+        const logoPath = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'logo.png')));
+        // Replace placeholder with actual logo path htmlContent = htmlContent.replace('%LOGO_PATH%', logoPath.toString());
+        htmlContent = htmlContent.replace('%LOGO_PATH%', logoPath.toString());
         return htmlContent;
     }
 }

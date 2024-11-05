@@ -23,8 +23,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private getHtmlForWebview(webview: vscode.Webview): string {
-    const htmlPath = path.join(this._extensionUri.fsPath, 'media', 'webview.html');
-    const htmlContent = fs.readFileSync(htmlPath, 'utf8');
+    const htmlPath = path.join(this._extensionUri.fsPath, 'src', 'webview.html');
+    let htmlContent = fs.readFileSync(htmlPath, 'utf8');
+    const logoPath = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'logo.png')));
+
+    // Replace placeholder with actual logo path htmlContent = htmlContent.replace('%LOGO_PATH%', logoPath.toString());
+    htmlContent = htmlContent.replace('%LOGO_PATH%', logoPath.toString());
     return htmlContent;
   }
 }

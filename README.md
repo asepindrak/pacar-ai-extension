@@ -38,4 +38,12 @@ Users appreciate release notes as you update your extension.
 
 Initial release of Pacar AI
 
+### 1.0.1
+
+style: redesign login form UI
+
+### 1.0.2
+
+style: enhance UI with new styles and layout adjustments
+
 ---

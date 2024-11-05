@@ -8,11 +8,72 @@
         <style>
             body,
             html {
-                width: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
                 height: 100%;
+                width: 100%;
                 margin: 0;
-                padding: 0;
+                font-family: Arial, sans-serif;
+                background-color: #f3f4f6;
                 overflow: hidden;
+            }
+
+            .login-container {
+                background: white;
+                padding: 2rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                width: 70%;
+                max-width: 400px;
+            }
+
+            .login-container h2 {
+                margin-bottom: 1rem;
+                font-size: 1.5rem;
+                color: #333;
+            }
+
+            .login-container input {
+                width: 100%;
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+                border: 1px solid #d1d5db;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+
+            .login-container button {
+                width: 100%;
+                padding: 0.75rem;
+                background-color: #911313;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 1rem;
+            }
+
+            .login-container button:hover {
+                background-color: #c44b4b;
+            }
+
+            .login-container a {
+                display: block;
+                margin-top: 1rem;
+                text-align: center;
+                color: #911313;
+                text-decoration: none;
+            }
+
+            .login-container a:hover {
+                text-decoration: underline;
+            }
+
+            .login-container img {
+                width: 300px;
+                margin-bottom: 1rem;
             }
 
             iframe {
@@ -36,6 +97,9 @@
 
             .history-container {
                 padding: 10px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
             .history-item {
@@ -81,6 +145,11 @@
 
             .overflow-y-auto {
                 overflow-y: auto;
+            }
+
+            .bg-gray-200 {
+                background-color: #d8d8d8;
+                /* Light gray color */
             }
 
             .p-4 {
@@ -264,11 +333,16 @@
                 font-size: 14px;
                 overflow-y: auto;
                 height: calc(100% - 80px);
+                width: 100%;
                 /* Adjust height as needed */
             }
 
             .min-w-150px {
                 min-width: 150px;
+            }
+
+            .min-w-100px {
+                min-width: 100px;
             }
 
             .text-red-600 {
@@ -354,6 +428,16 @@
                 /* 8px */
                 margin-bottom: 0.5rem;
                 /* 8px */
+            }
+
+            .message {
+                width: 100%;
+                padding: 1rem;
+                box-sizing: border-box;
+                background-color: #e2e8f0;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                margin-top: 1rem;
             }
         </style>
     </head>
@@ -443,13 +527,16 @@
             function showLoginForm() {
                 const content = document.getElementById('content')
                 content.innerHTML = `
-      <form id="loginForm" action="#" method="post">
-        <input type="text" name="email" placeholder="Masukkan email" />
-        <input type="password" name="password" placeholder="Masukkan password" />
-        <button type="submit">Login</button>
-      </form>
-      <a href="https://pacar-ai.my.id/" target="_blank">Register</a>
-    `
+                    <div class="login-container">
+                        <img src="%LOGO_PATH%" alt="Logo">
+                        <form id="loginForm" action="#" method="post">
+                            <input type="text" name="email" placeholder="Masukkan email" required />
+                            <input type="password" name="password" placeholder="Masukkan password" required />
+                            <button type="submit">Login</button>
+                        </form>
+                        <a href="https://pacar-ai.my.id/" target="_blank">Register</a>
+                    </div>
+                `
                 const form = document.getElementById('loginForm')
                 form.addEventListener('submit', login)
             }
@@ -530,6 +617,7 @@
 
                 if (history.length > 0) {
                     const historyTitle = document.createElement('h2')
+                    historyTitle.className = 'text-center text-grey'
                     historyTitle.textContent = 'Pilih Pacar:'
                     historyContainer.appendChild(historyTitle)
 
@@ -549,7 +637,7 @@
                         avatar.className = 'rounded-full mr-2'
 
                         const nameContainer = document.createElement('div')
-                        nameContainer.className = 'p-2 text-left min-w-150px'
+                        nameContainer.className = 'p-2 text-left min-w-100px'
                         const name = document.createElement('div')
                         name.textContent = item.name
                         const status = document.createElement('div')
