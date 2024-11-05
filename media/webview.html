@@ -475,6 +475,23 @@
 
                 const messageInput = document.getElementById('messageInput')
                 messageInput.addEventListener('keydown', handleKeyDown)
+
+                window.addEventListener('message', async event => {
+                    const messageText = event.data // Menerima pesan dari extension
+                    let coding = ""
+                    if (messageText.text) {
+                        coding = messageText.text
+                    }
+
+                    const messageInput = document.getElementById('messageInput')
+                    let message = messageInput.value.trim()
+                    if (coding) {
+                        message = message + " : " + "```" + coding + "```"
+                    }
+
+                    if (!message) return
+                    sendMessageToApi(message)
+                })
             })
 
             function handleKeyDown(event) {
@@ -486,59 +503,46 @@
 
             async function handleSendMessage() {
 
+                const content = document.getElementById('content')
+                content.innerHTML = 'Sending message...'
                 vscode.postMessage({ command: 'getSelectedText' })
-                window.addEventListener('message', async event => {
-                    const messageText = event.data // Menerima pesan dari extension
-                    let coding = ""
-                    if (messageText.text) {
-                        coding = messageText.text
+
+            }
+
+            async function sendMessageToApi(message) {
+                console.log("message", message)
+                const historyId = localStorage.getItem('historyId')
+                const userId = localStorage.getItem('userId')
+                const character = localStorage.getItem('character')
+
+                const data = {
+                    historyId,
+                    userId,
+                    character,
+                    message
+                }
+
+                try {
+                    const response = await fetch('https://chat.pacar-ai.my.id/api/messages', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    })
+
+                    if (!response.ok) {
+                        throw new Error('Failed to send message')
                     }
 
-                    const messageInput = document.getElementById('messageInput')
-                    let message = messageInput.value.trim()
-                    if (coding) {
-                        message = message + " ```" + coding + "```"
-                    }
-
-                    if (!message) return
-
-                    const content = document.getElementById('content')
-                    content.innerHTML = 'Sending message...'
-                    const historyId = localStorage.getItem('historyId')
-                    const userId = localStorage.getItem('userId')
-                    const character = localStorage.getItem('character')
-
-                    const data = {
-                        historyId,
-                        userId,
-                        character,
-                        message
-                    }
-
-                    try {
-                        const response = await fetch('https://chat.pacar-ai.my.id/api/messages', {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(data)
-                        })
-
-                        if (!response.ok) {
-                            throw new Error('Failed to send message')
-                        }
-
-                        const newMessage = await response.json()
-                        // displayMessages([newMessage])
-                        messageInput.value = ''
-                        loadMessages(historyId)
-                    } catch (error) {
-                        console.error('Error sending message:', error)
-                    }
-                })
-
-
+                    const newMessage = await response.json()
+                    // displayMessages([newMessage])
+                    messageInput.value = ''
+                    loadMessages(historyId)
+                } catch (error) {
+                    console.error('Error sending message:', error)
+                }
             }
 
             function showLoginForm() {
@@ -775,22 +779,26 @@
 
                         parts.forEach((part, i) => {
                             if (part.startsWith('```') && part.endsWith('```')) {
-                                const codeContent = part.slice(3, -3).trim()
+                                let codeContent = part.slice(3, -3).trim()
                                 const codeLines = codeContent.split('\n')
-                                const language = codeLines[0].trim()
-                                const code = codeLines.slice(1).join('\n').trim()
+                                const firstLine = codeLines[0].trim()
+                                const languageRegex = /^(javascript|python|java|c\+\+|c#|ruby|go|php|typescript|swift|kotlin)$/i
+
+                                if (languageRegex.test(firstLine)) {
+                                    codeContent = codeLines.slice(1).join('\n').trim() // Remove the first line if it matches a language
+                                }
 
                                 const codeDiv = document.createElement('div')
                                 codeDiv.className = 'bg-gray-800 text-white p-2 rounded-lg mb-2'
 
                                 const pre = document.createElement('pre')
-                                pre.textContent = code
+                                pre.textContent = codeContent
                                 codeDiv.appendChild(pre)
 
                                 const copyButton = document.createElement('button')
                                 copyButton.textContent = 'Copy'
                                 copyButton.className = 'mt-2 bg-blue-500 text-white px-2 py-1 rounded'
-                                copyButton.onclick = () => handleCopy(code)
+                                copyButton.onclick = () => handleCopy(codeContent)
                                 codeDiv.appendChild(copyButton)
 
                                 messageContent.appendChild(codeDiv)
@@ -806,7 +814,7 @@
                                 messageContent.appendChild(textSpan)
                             }
                         })
-
+                        console.log("messageContent", messageContent)
                         messageDiv.appendChild(messageContent)
                         chatContainer.appendChild(messageDiv)
                     }

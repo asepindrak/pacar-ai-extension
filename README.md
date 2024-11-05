@@ -33,6 +33,10 @@ Ready to code with a twist of companionship? 🌟💻💕
 
 ## Release Notes
 
+### 1.1.1
+
+fix: ui messages from user to handle code
+
 ### 1.1.0
 
 feat: Select Code to AI
