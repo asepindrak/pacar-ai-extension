@@ -117,6 +117,17 @@
                 border-radius: 10px;
             }
 
+            .chara-button {
+                margin-top: 20px;
+                padding: 10px;
+                background-color: rgb(94, 26, 26);
+                color: white;
+                border: none;
+                cursor: pointer;
+                text-decoration: none;
+                border-radius: 10px;
+            }
+
             .w-100px {
                 width: 100px;
             }
@@ -700,11 +711,18 @@
                     historyContainer.appendChild(relogin)
                 }
 
+                const newChara = document.createElement('a')
+                newChara.className = 'chara-button mt-2 my-2 mt-2'
+                newChara.textContent = 'Buat Pacar Baru'
+                newChara.href = "https://chat.pacar-ai.my.id/"
+                historyContainer.appendChild(newChara)
+
                 const logoutButton = document.createElement('button')
                 logoutButton.className = 'logout-button'
                 logoutButton.textContent = 'Logout'
                 logoutButton.onclick = logout
                 historyContainer.appendChild(logoutButton)
+
 
                 content.appendChild(historyContainer)
             }

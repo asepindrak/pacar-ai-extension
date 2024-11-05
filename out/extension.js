@@ -115,9 +115,14 @@ async function triggerCodeCompletion(context, comment, allCode) {
         const currentLine = editor.selection.active.line;
         editor.edit(editBuilder => {
             editBuilder.insert(new vscode.Position(currentLine + 1, 0), `${coding}\n`); // Tampilkan hasil dalam abu-abu
+        }).then(() => {
+            // Setelah edit selesai, set cursor ke akhir hasil code completion
+            const newCursorLine = currentLine + 1; // Baris setelah hasil
+            const newCursorPosition = new vscode.Position(newCursorLine, coding.length); // Akhir teks hasil
+            editor.selection = new vscode.Selection(newCursorPosition, newCursorPosition); // Set posisi cursor
         });
         // Set cursor ke baris berikutnya
-        editor.selection = new vscode.Selection(currentLine + 2, 0, currentLine + 2, 0);
+        // editor.selection = new vscode.Selection(currentLine + 2, 0, currentLine + 2, 0);
         // Tangkap event Tab untuk mengganti hasil abu-abu
         const disposable = vscode.workspace.onDidChangeTextDocument(event => {
             if (event.document === editor.document) {
