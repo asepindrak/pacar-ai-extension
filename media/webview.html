@@ -334,7 +334,8 @@
                 overflow-y: auto;
                 height: calc(100% - 80px);
                 width: 100%;
-                /* Adjust height as needed */
+                margin-bottom: 50px
+                    /* Adjust height as needed */
             }
 
             .min-w-150px {
@@ -459,7 +460,9 @@
             </div>
         </div>
         <script>
+
             document.addEventListener('DOMContentLoaded', function () {
+
                 const token = localStorage.getItem('token')
                 const userId = localStorage.getItem('userId')
                 if (token && userId) {
@@ -482,46 +485,60 @@
             }
 
             async function handleSendMessage() {
-                const messageInput = document.getElementById('messageInput')
-                const message = messageInput.value.trim()
-                console.log('Sending message:', message)
 
-                if (!message) return
-
-                const content = document.getElementById('content')
-                content.innerHTML = 'Sending message...'
-                const historyId = localStorage.getItem('historyId')
-                const userId = localStorage.getItem('userId')
-                const character = localStorage.getItem('character')
-
-                const data = {
-                    historyId,
-                    userId,
-                    character,
-                    message
-                }
-
-                try {
-                    const response = await fetch('https://chat.pacar-ai.my.id/api/messages', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    })
-
-                    if (!response.ok) {
-                        throw new Error('Failed to send message')
+                vscode.postMessage({ command: 'getSelectedText' })
+                window.addEventListener('message', async event => {
+                    const messageText = event.data // Menerima pesan dari extension
+                    let coding = ""
+                    if (messageText.text) {
+                        coding = messageText.text
                     }
 
-                    const newMessage = await response.json()
-                    // displayMessages([newMessage])
-                    messageInput.value = ''
-                    loadMessages(historyId)
-                } catch (error) {
-                    console.error('Error sending message:', error)
-                }
+                    const messageInput = document.getElementById('messageInput')
+                    let message = messageInput.value.trim()
+                    if (coding) {
+                        message = message + " ```" + coding + "```"
+                    }
+
+                    if (!message) return
+
+                    const content = document.getElementById('content')
+                    content.innerHTML = 'Sending message...'
+                    const historyId = localStorage.getItem('historyId')
+                    const userId = localStorage.getItem('userId')
+                    const character = localStorage.getItem('character')
+
+                    const data = {
+                        historyId,
+                        userId,
+                        character,
+                        message
+                    }
+
+                    try {
+                        const response = await fetch('https://chat.pacar-ai.my.id/api/messages', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        })
+
+                        if (!response.ok) {
+                            throw new Error('Failed to send message')
+                        }
+
+                        const newMessage = await response.json()
+                        // displayMessages([newMessage])
+                        messageInput.value = ''
+                        loadMessages(historyId)
+                    } catch (error) {
+                        console.error('Error sending message:', error)
+                    }
+                })
+
+
             }
 
             function showLoginForm() {
@@ -809,6 +826,12 @@
                 localStorage.removeItem('userId')
                 showLoginForm()
             }
+
+            const vscode = acquireVsCodeApi()
+
+
+
+
         </script>
     </body>
 

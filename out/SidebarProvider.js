@@ -39,6 +39,17 @@ class SidebarProvider {
             enableScripts: true,
             localResourceRoots: [this._extensionUri]
         };
+        const selectedText = webviewView.webview.onDidReceiveMessage((message) => {
+            if (message.command === 'getSelectedText') {
+                const editor = vscode.window.activeTextEditor;
+                if (editor) {
+                    const selection = editor.selection;
+                    const text = editor.document.getText(selection);
+                    // Kirim ke webview
+                    webviewView.webview.postMessage({ text });
+                }
+            }
+        });
         webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
     }
     getHtmlForWebview(webview) {

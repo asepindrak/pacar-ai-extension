@@ -11,9 +11,10 @@ Ready to code with a twist of companionship? 🌟💻💕
 - **Roleplay with AI**: Enjoy conversations with your AI companion, making coding less lonely and more engaging. 
 - **Interactive Chat**: Communicate with Pacar AI in real-time, ask questions, and get instant responses. 
 - **Emotional Support**: Need a motivational boost? Pacar AI is here to lift your spirits!
+- **Select Code to AI**: Easily select code snippets and ask Pacar AI for explanations, debugging help, or improvements directly.
 
 ## Upcoming Features 
-- **Select Code to AI**: Easily select code snippets and ask Pacar AI for explanations, debugging help, or improvements directly.
+- **Code Completion**: Suggests code elements like variable and function names based on the current context. 
 
 ## Installation 
 1. **Install the Extension**: Open Visual Studio Code, go to the Extensions view by clicking the Extensions icon in the Activity Bar on the side of the window, or select `View` -> `Extensions`. 
@@ -32,18 +33,23 @@ Ready to code with a twist of companionship? 🌟💻💕
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 1.1.0
 
-### 1.0.0
+feat: Select Code to AI
 
-Initial release of Pacar AI
+### 1.0.2
+
+style: enhance UI with new styles and layout adjustments
 
 ### 1.0.1
 
 style: redesign login form UI
 
-### 1.0.2
+### 1.0.0
 
-style: enhance UI with new styles and layout adjustments
+Initial release of Pacar AI
+
+
+
 
 ---
