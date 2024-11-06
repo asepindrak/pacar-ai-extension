@@ -27,6 +27,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           const text = editor.document.getText(selection);
           // Kirim ke webview
           webviewView.webview.postMessage({ text });
+        } else {
+          // Kirim ke webview
+          webviewView.webview.postMessage({ text: '' });
         }
       }
     });

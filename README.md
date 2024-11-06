@@ -12,6 +12,7 @@ Ready to code with a twist of companionship? 🌟💻💕
 - **Interactive Chat**: Communicate with Pacar AI in real-time, ask questions, and get instant responses. 
 - **Emotional Support**: Need a motivational boost? Pacar AI is here to lift your spirits!
 - **Select Code to AI**: Easily select code snippets and ask Pacar AI for explanations, debugging help, or improvements directly.
+- **Continue the code based on the provided comment**: Effortlessly extend your code by leveraging the AI's understanding of your comments to generate relevant and context-aware code snippets that follow your intended logic and requirements.
 
 ## Upcoming Features 
 - **Code Completion**: Suggests code elements like variable and function names based on the current context. 
@@ -32,6 +33,10 @@ Ready to code with a twist of companionship? 🌟💻💕
 ## License This extension is licensed under the MIT License. See the LICENSE file for details.
 
 ## Release Notes
+
+### 1.2.0
+
+feat: Continue the code based on the provided comment & send message without editor
 
 ### 1.1.1
 

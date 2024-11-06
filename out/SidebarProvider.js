@@ -50,6 +50,10 @@ class SidebarProvider {
                     // Kirim ke webview
                     webviewView.webview.postMessage({ text });
                 }
+                else {
+                    // Kirim ke webview
+                    webviewView.webview.postMessage({ text: '' });
+                }
             }
         });
         webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);

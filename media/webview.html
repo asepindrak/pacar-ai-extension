@@ -451,6 +451,54 @@
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 margin-top: 1rem;
             }
+
+            .loader {
+                animation: rotate 2s linear infinite;
+                width: 24px;
+                /* Sesuaikan dengan ukuran yang diinginkan */
+                height: 24px;
+                /* Agar bisa ditempatkan di atas tombol */
+                transform: translate(-50%, -50%);
+                /* Pusatkan loader */
+            }
+
+            .path {
+                stroke: #3498db;
+                /* Warna loader */
+                stroke-linecap: round;
+                animation: dash 1.5s ease-in-out infinite;
+            }
+
+            .hidden {
+                display: none;
+            }
+
+            @keyframes rotate {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            @keyframes dash {
+                0% {
+                    stroke-dasharray: 1, 150;
+                    stroke-dashoffset: 0;
+                }
+
+                50% {
+                    stroke-dasharray: 90, 150;
+                    stroke-dashoffset: -35;
+                }
+
+                100% {
+                    stroke-dasharray: 90, 150;
+                    stroke-dashoffset: -124;
+                }
+            }
         </style>
     </head>
 
@@ -464,8 +512,13 @@
                     rows="1"></textarea>
                 <button id="sendMessageButton"
                     class="ml-2 h-12 p-2 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded">
-                    <svg class="h-4 w-4 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    <div id="button-send" class="button-send">
+                        <svg class="h-4 w-4 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                        </svg>
+                    </div>
+                    <svg id="loader" class="loader hidden" viewBox="0 0 24 24">
+                        <circle class="path" cx="12" cy="12" r="10" fill="none" stroke-width="4" />
                     </svg>
                 </button>
             </div>
@@ -489,6 +542,7 @@
 
                 window.addEventListener('message', async event => {
                     const messageText = event.data // Menerima pesan dari extension
+                    console.log("messageText", messageText)
                     let coding = ""
                     if (messageText.text) {
                         coding = messageText.text
@@ -499,7 +553,7 @@
                     if (coding) {
                         message = message + " : " + "[selection]```" + coding + "```[selection]"
                     }
-
+                    console.log("send message to API")
                     if (!message) return
                     sendMessageToApi(message)
                 })
@@ -513,9 +567,14 @@
             }
 
             async function handleSendMessage() {
+                const sendMessageButton = document.getElementById('button-send')
+                const loader = document.getElementById('loader')
 
-                const content = document.getElementById('content')
-                content.innerHTML = 'Sending message...'
+                // Ganti tombol dengan loader
+                sendMessageButton.classList.add('hidden') // Sembunyikan tombol
+                loader.classList.remove('hidden') // Tampilkan loader
+                console.log("send message to Pacar AI")
+                // Proses pengiriman pesan
                 vscode.postMessage({ command: 'getSelectedText' })
 
             }
@@ -550,6 +609,13 @@
                     const newMessage = await response.json()
                     // displayMessages([newMessage])
                     messageInput.value = ''
+
+                    const sendMessageButton = document.getElementById('button-send')
+                    const loader = document.getElementById('loader')
+
+                    loader.classList.add('hidden') // Sembunyikan loader
+                    sendMessageButton.classList.remove('hidden') // Tampilkan tombol kembali
+
                     loadMessages(historyId)
                 } catch (error) {
                     console.error('Error sending message:', error)
