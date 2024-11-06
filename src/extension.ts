@@ -32,7 +32,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 					const currentLineText = editor.document.lineAt(currentLine).text;
 
-					console.log(currentLineText);
 
 					// Cek apakah baris sebelumnya adalah komentar
 					if (/^\s*(\/\/|\/\*|\*|#|<!--)/.test(currentLineText)) {
@@ -57,9 +56,9 @@ export function activate(context: vscode.ExtensionContext) {
 		const editor = vscode.window.activeTextEditor;
 		if (editor) {
 			const currentLine = editor.selection.active.line;
-			console.log(editor.document.lineAt(currentLine - 1).text)
+
 			const instructionLine = editor.document.lineAt(currentLine - 1).text;
-			console.log("instructionLine", instructionLine)
+
 			if (instructionLine === "Press Tab to accept code from Pacar AI...") {
 
 				vscode.commands.executeCommand('pacar-ai.applyCode').then(() => {

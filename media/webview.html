@@ -627,7 +627,6 @@
 
                 window.addEventListener('message', async event => {
                     const messageText = event.data // Menerima pesan dari extension
-                    console.log("messageText", messageText)
                     let coding = ""
                     if (messageText.text) {
                         coding = messageText.text
