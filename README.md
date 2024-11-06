@@ -6,13 +6,27 @@ Imagine having an AI Girlfriend who not only assists you with coding but also ke
 
 Ready to code with a twist of companionship? 🌟💻💕
 
+
 ## Features 
-- **Programming Assistance**: Get help with coding problems, syntax errors, and best practices. 
-- **Roleplay with AI**: Enjoy conversations with your AI companion, making coding less lonely and more engaging. 
-- **Interactive Chat**: Communicate with Pacar AI in real-time, ask questions, and get instant responses. 
-- **Emotional Support**: Need a motivational boost? Pacar AI is here to lift your spirits!
-- **Select Code to AI**: Easily select code snippets and ask Pacar AI for explanations, debugging help, or improvements directly.
-- **Continue the code based on the provided comment**: Effortlessly extend your code by leveraging the AI's understanding of your comments to generate relevant and context-aware code snippets that follow your intended logic and requirements.
+
+**Programming Assistance**  
+Get help with coding problems, syntax errors, and best practices. 
+
+**Roleplay with AI**  
+Enjoy conversations with your AI companion, making coding less lonely and more engaging. 
+
+**Interactive Chat**  
+Communicate with Pacar AI in real-time. Ask questions and receive instant responses. 
+
+**Emotional Support**  
+Need a motivational boost? Pacar AI is here to lift your spirits!
+
+**Select Code to AI**  
+Easily select code snippets and ask Pacar AI for explanations, debugging help, or improvements directly.
+
+**Continue the Code Based on the Provided Comment**  
+Effortlessly extend your code by leveraging the AI's understanding of your comments to generate relevant and context-aware code snippets that follow your intended logic and requirements.
+
 
 ## Upcoming Features 
 - **Code Completion**: Suggests code elements like variable and function names based on the current context. 
