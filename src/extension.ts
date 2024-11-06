@@ -23,55 +23,54 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('pacar-ai.triggerCompletion', () => {
 			const editor = vscode.window.activeTextEditor;
 			if (editor) {
-				// Dapatkan seluruh kode dari editor
-				const allCode = editor.document.getText();
-
 				const currentLine = editor.selection.active.line;
-				// Tambahkan new line setelahnya
+				// Lakukan edit untuk menambahkan newline di posisi kursor
 				editor.edit(editBuilder => {
-					// Tambahkan new line di akhir baris saat ini
-					editBuilder.insert(new vscode.Position(currentLine + 1, 0), '\n');
+					// Sisipkan newline di posisi kursor
+					editBuilder.insert(editor.selection.active, '\n');
 				}).then(() => {
-					// Set cursor ke line berikutnya
-					editor.selection = new vscode.Selection(currentLine + 1, 0, currentLine + 1, 0);
 
-					if (currentLine >= 0) {
-						let coding = "";
+					const currentLineText = editor.document.lineAt(currentLine).text;
 
-						// Tambahkan baris saat ini
-						coding += editor.document.lineAt(currentLine).text + '\n';
-						if (/^\s*(\/\/|\/\*|\*|#|<!--)/.test(coding)) {
-							console.log("coding", coding)
-							const cleanCode = removeCommentTags(coding);
-							console.log("cleanCode", cleanCode)
-							triggerCodeCompletion(context, cleanCode, allCode);
-						}
+					console.log(currentLineText);
+
+					// Cek apakah baris sebelumnya adalah komentar
+					if (/^\s*(\/\/|\/\*|\*|#|<!--)/.test(currentLineText)) {
+						console.log("code completion generate..")
+						// Jika baris sebelumnya adalah komentar, jalankan logika triggerCodeCompletion
+						const allCode = editor.document.getText(); // Dapatkan seluruh kode dari editor
+						let coding = currentLineText + '\n'; // Tambahkan baris sebelumnya ke coding
+
+						// Panggil fungsi untuk membersihkan comment dan trigger completion
+						const cleanCode = removeCommentTags(coding);
+						triggerCodeCompletion(context, cleanCode, allCode);
 					}
 				});
+
 			}
 		})
 	);
 
 	// Register keybinding untuk Tab
 	const triggerTabCommand = vscode.commands.registerCommand('pacar-ai.triggerTab', () => {
+		console.log("tab key tap")
 		const editor = vscode.window.activeTextEditor;
 		if (editor) {
 			const currentLine = editor.selection.active.line;
-			if (currentLine + 1 < editor.document.lineCount) {
-				const instructionLine = editor.document.lineAt(currentLine + 1).text;
-				if (instructionLine === "Tekan Tab untuk menerima kode dari Pacar AI") {
-					vscode.commands.executeCommand('pacar-ai.applyCode').then(() => {
-						// Kembalikan fungsi asli tombol tab setelah code completion
-						vscode.commands.executeCommand('editor.action.indentLines');
-					});
-				} else {
-					// Jika tidak ada pesan instruksi, gunakan fungsi asli tombol tab
+			console.log(editor.document.lineAt(currentLine - 1).text)
+			const instructionLine = editor.document.lineAt(currentLine - 1).text;
+			console.log("instructionLine", instructionLine)
+			if (instructionLine === "Press Tab to accept code from Pacar AI...") {
+
+				vscode.commands.executeCommand('pacar-ai.applyCode').then(() => {
+					// Kembalikan fungsi asli tombol tab setelah code completion
 					vscode.commands.executeCommand('editor.action.indentLines');
-				}
+				});
 			} else {
 				// Jika tidak ada pesan instruksi, gunakan fungsi asli tombol tab
 				vscode.commands.executeCommand('editor.action.indentLines');
 			}
+
 		}
 	});
 	context.subscriptions.push(triggerTabCommand); // Pastikan command ini juga terdaftar
@@ -98,7 +97,6 @@ async function triggerCodeCompletion(context: vscode.ExtensionContext, comment: 
 	const body = {
 		code: `this is the full code from editor ${allCodeData}. continue the code from instruction comment: "${comment}". Provide only the code without triple backtick and programming language, with comments for additional lines.`,
 	};
-	console.log(body);
 
 	const response = await fetch('https://chat.pacar-ai.my.id/api/code', {
 		method: 'POST',
@@ -124,16 +122,16 @@ async function triggerCodeCompletion(context: vscode.ExtensionContext, comment: 
 		const currentLine = editor.selection.active.line;
 
 		// Tampilkan pesan instruksi
-		const instructionMessage = "Tekan Tab untuk menerima kode dari Pacar AI";
+		const instructionMessage = "Press Tab to accept code from Pacar AI...";
 		editor.edit(editBuilder => {
-			editBuilder.insert(new vscode.Position(currentLine + 1, 0), `${instructionMessage}\n`); // Tampilkan instruksi
+			editBuilder.insert(new vscode.Position(currentLine, 0), `${instructionMessage}\n`); // Tampilkan instruksi
 		}).then(() => {
 			// Daftarkan command untuk menerapkan hasil code completion
 			const applyCodeCommand = vscode.commands.registerCommand('pacar-ai.applyCode', () => {
 				editor.edit(editBuilder => {
 					// Hapus pesan instruksi
-					const instructionStartPosition = new vscode.Position(currentLine + 1, 0);
-					const instructionEndPosition = new vscode.Position(currentLine + 2, 0);
+					const instructionStartPosition = new vscode.Position(currentLine, 0);
+					const instructionEndPosition = new vscode.Position(currentLine + 1, 0);
 					editBuilder.delete(new vscode.Range(instructionStartPosition, instructionEndPosition));
 
 					// Sisipkan hasil code completion

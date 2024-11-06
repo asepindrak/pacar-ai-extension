@@ -82,11 +82,6 @@
                 border: none;
             }
 
-            .message {
-                margin-top: 10px;
-                font-size: 14px;
-            }
-
             .success {
                 color: green;
             }
@@ -248,6 +243,11 @@
                 /* 8px */
             }
 
+            .mt-5 {
+                margin-top: 3rem;
+                /* 8px */
+            }
+
             .px-2 {
                 padding-left: 0.5rem;
                 /* 8px */
@@ -337,16 +337,6 @@
                 left: 0;
                 right: 0;
                 width: 100%;
-            }
-
-            .content {
-                margin-top: 10px;
-                font-size: 14px;
-                overflow-y: auto;
-                height: calc(100% - 80px);
-                width: 100%;
-                margin-bottom: 50px
-                    /* Adjust height as needed */
             }
 
             .min-w-150px {
@@ -442,14 +432,46 @@
                 /* 8px */
             }
 
-            .message {
+            .w-full {
+                width: 100%
+            }
+
+
+
+
+
+            .content {
+                width: auto;
+                /* Allow the message to take its natural width */
+                max-width: 100%;
+                margin-top: 10px;
+                font-size: 14px;
+                overflow-y: auto;
+                height: calc(100% - 80px);
                 width: 100%;
+                margin-bottom: 50px;
+                overflow-wrap: break-word;
+                /* Break long words */
+                word-wrap: break-word;
+                /* Adjust height as needed */
+                /* Prevents the content from exceeding the width of the screen */
+            }
+
+            .message {
+                width: auto;
+                /* Allow the message to take its natural width */
+                max-width: 80%;
+                /* Limit the maximum width */
                 padding: 1rem;
                 box-sizing: border-box;
                 background-color: #e2e8f0;
                 border-radius: 8px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 margin-top: 1rem;
+                overflow-wrap: break-word;
+                /* Break long words */
+                word-wrap: break-word;
+                /* For older browsers */
             }
 
             .loader {
@@ -625,15 +647,17 @@
             function showLoginForm() {
                 const content = document.getElementById('content')
                 content.innerHTML = `
-                    <div class="login-container">
-                        <img src="%LOGO_PATH%" alt="Logo">
-                        <form id="loginForm" action="#" method="post">
-                            <input type="text" name="email" placeholder="Masukkan email" required />
-                            <input type="password" name="password" placeholder="Masukkan password" required />
-                            <button type="submit">Login</button>
-                        </form>
-                        <a href="https://pacar-ai.my.id/" target="_blank">Register</a>
-                    </div>
+                    <center>
+                        <div class="login-container mt-5">
+                            <img src="%LOGO_PATH%" alt="Logo">
+                            <form id="loginForm" action="#" method="post">
+                                <input type="text" name="email" placeholder="Masukkan email" required />
+                                <input type="password" name="password" placeholder="Masukkan password" required />
+                                <button type="submit">Login</button>
+                            </form>
+                            <a href="https://pacar-ai.my.id/" target="_blank">Register</a>
+                        </div>
+                    </center>
                 `
                 const form = document.getElementById('loginForm')
                 form.addEventListener('submit', login)
@@ -727,7 +751,7 @@
                     history.forEach((item, index) => {
 
                         const historyItem = document.createElement('button')
-                        historyItem.className = 'flex items-center px-2 py-1 my-1 rounded bg-gray-200'
+                        historyItem.className = 'flex items-center px-2 py-1 my-1 rounded bg-gray-200 w-full'
                         historyItem.onclick = () => handleHistorySelect(item)
                         const avatar = document.createElement('img')
                         avatar.src = `https://chat.pacar-ai.my.id${item.avatar}`

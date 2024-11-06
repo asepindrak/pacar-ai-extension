@@ -25,9 +25,9 @@ Need a motivational boost? Pacar AI is here to lift your spirits!
 **Select Code to AI**  
 Easily select code snippets and ask Pacar AI for explanations, debugging help, or improvements directly.
 
-**Continue the Code Based on the Provided Comment**  
+**Continue the Code Based on the Provided Comment with Ctrl+Enter Key**  
 Effortlessly extend your code by leveraging the AI's understanding of your comments to generate relevant and context-aware code snippets that follow your intended logic and requirements.
-
+- Press Ctrl+Enter key after comment in your code
 
 ## Upcoming Features 
 
@@ -61,6 +61,10 @@ This extension is licensed under the MIT License. See the LICENSE file for detai
 
 
 ## Release Notes
+
+### 1.2.1
+- **Fix**: Change enter key to Ctrl+Enter key.
+- **Fix**: Fix bug enter key.
 
 ### 1.2.0
 - **Feature**: Continue the code based on the provided comment.
