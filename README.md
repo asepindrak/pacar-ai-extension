@@ -62,6 +62,9 @@ This extension is licensed under the MIT License. See the LICENSE file for detai
 
 ## Release Notes
 
+### 1.2.3
+- **Style**: Redesign UI.
+
 ### 1.2.2
 - **Chore**: Rename Extension.
 

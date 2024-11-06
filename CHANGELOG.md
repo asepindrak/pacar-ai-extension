@@ -1,9 +1,36 @@
 # Change Log
 
-All notable changes to the "pacar-ai" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
 ## [Unreleased]
 
-- Initial release
+## [1.2.3] - 2024-11-07
+
+### Added
+
+### 1.2.3
+- **Style**: Redesign UI.
+
+### 1.2.2
+- **Chore**: Rename Extension.
+
+### 1.2.1
+- **Fix**: Change enter key to Ctrl+Enter key.
+- **Fix**: Fix bug enter key.
+
+### 1.2.0
+- **Feature**: Continue the code based on the provided comment.
+- **Feature**: Send message without editor.
+
+### 1.1.1
+- **Fix**: UI messages from user to handle code.
+
+### 1.1.0
+- **Feature**: Select Code to AI.
+
+### 1.0.2
+- **Style**: Enhanced UI with new styles and layout adjustments.
+
+### 1.0.1
+- **Style**: Redesigned login form UI.
+
+### 1.0.0
+- **Initial Release**: Pacar AI.

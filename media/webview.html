@@ -16,12 +16,16 @@
                 width: 100%;
                 margin: 0;
                 font-family: Arial, sans-serif;
-                background-color: #f3f4f6;
+                background-color: #1f1f1f;
                 overflow: hidden;
             }
 
+            .bg-black {
+                background-color: #1f1f1f;
+            }
+
             .login-container {
-                background: white;
+                background: #202020;
                 padding: 2rem;
                 border-radius: 8px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -39,7 +43,9 @@
                 width: 100%;
                 padding: 0.75rem;
                 margin-bottom: 1rem;
-                border: 1px solid #d1d5db;
+                border: 1px solid #5a5a5a;
+                background-color: #1f1f1f;
+                color: #eee;
                 border-radius: 4px;
                 box-sizing: border-box;
             }
@@ -61,9 +67,9 @@
 
             .login-container a {
                 display: block;
-                margin-top: 1rem;
+                margin-top: 3rem;
                 text-align: center;
-                color: #911313;
+                color: #636363;
                 text-decoration: none;
             }
 
@@ -105,22 +111,36 @@
             .logout-button {
                 margin-top: 20px;
                 padding: 10px;
-                background-color: rgb(158, 24, 24);
+                background-color: rgb(0, 0, 0);
                 color: white;
                 border: none;
                 cursor: pointer;
-                border-radius: 10px;
+                border-radius: 5px;
+            }
+
+            .logout-button:hover {
+                color: #eee;
+                background-color: #383838;
             }
 
             .chara-button {
                 margin-top: 20px;
                 padding: 10px;
-                background-color: rgb(94, 26, 26);
+                background-color: #911313;
                 color: white;
                 border: none;
                 cursor: pointer;
                 text-decoration: none;
-                border-radius: 10px;
+                border-radius: 5px;
+            }
+
+            .chara-button:hover {
+                color: #eee;
+                background-color: #af3434;
+            }
+
+            .bg-chara:hover {
+                background-color: #222222;
             }
 
             .w-100px {
@@ -138,6 +158,13 @@
             .mr-2 {
                 margin-right: 0.5rem;
                 /* 8px */
+            }
+
+            pre {
+                white-space: pre-wrap;
+                /* Atau 'normal' */
+                word-wrap: break-word;
+                /* Ini buat ngatur kata yang panjang */
             }
 
             /* Utility classes */
@@ -164,7 +191,7 @@
             }
 
             .bg-chat {
-                background-color: #f3f4f6;
+                background-color: #1f1f1f;
                 /* Light gray background */
             }
 
@@ -243,6 +270,11 @@
                 /* 8px */
             }
 
+            .me-2 {
+                margin-right: 0.5rem;
+                /* 8px */
+            }
+
             .mt-5 {
                 margin-top: 3rem;
                 /* 8px */
@@ -283,7 +315,7 @@
             }
 
             .border-gray-300 {
-                border-color: #d1d5db;
+                border-color: #696969;
             }
 
             .focus\:outline-none {
@@ -295,7 +327,7 @@
             }
 
             .focus\:ring-blue-500 {
-                box-shadow: 0 0 0 2px #3b82f6;
+                box-shadow: 0 0 0 2px #243a5e;
             }
 
             .resize-none {
@@ -348,8 +380,23 @@
             }
 
             .text-red-600 {
-                color: #dc2626;
+                color: #9e2229;
                 /* Red color */
+            }
+
+            .text-blue-600 {
+                color: #3c4bd3;
+                /* Red color */
+            }
+
+            .text-gray-100 {
+                color: #dfdfdf;
+                /* Gray color */
+            }
+
+            .text-gray-400 {
+                color: #88909c;
+                /* Gray color */
             }
 
             .text-gray-600 {
@@ -439,6 +486,10 @@
 
 
 
+            .wrap {
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+            }
 
             .content {
                 width: auto;
@@ -484,6 +535,10 @@
                 /* Pusatkan loader */
             }
 
+            .max-width-500 {
+                max-width: 500px !important;
+            }
+
             .path {
                 stroke: #3498db;
                 /* Warna loader */
@@ -493,6 +548,14 @@
 
             .hidden {
                 display: none;
+            }
+
+            .bg-grey {
+                background-color: #222222;
+            }
+
+            .bg-grey-700 {
+                background-color: #252525;
             }
 
             @keyframes rotate {
@@ -527,10 +590,10 @@
     <body>
         <div id="content" class="content"></div>
         <div id="message" class="message"></div>
-        <div id="messageInputContainer" class="p-4 bg-white shadow-md fixed-bottom" style="display: none;">
+        <div id="messageInputContainer" class="p-4 bg-black shadow-md fixed-bottom" style="display: none;">
             <div class="flex items-center">
                 <textarea id="messageInput" placeholder="Type your message..."
-                    class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none h-12"
+                    class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none h-12 bg-black text-white"
                     rows="1"></textarea>
                 <button id="sendMessageButton"
                     class="ml-2 h-12 p-2 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded">
@@ -655,7 +718,7 @@
                                 <input type="password" name="password" placeholder="Masukkan password" required />
                                 <button type="submit">Login</button>
                             </form>
-                            <a href="https://pacar-ai.my.id/" target="_blank">Register</a>
+                            <a href="https://pacar-ai.my.id/" target="_blank" class="mt-2 my-2 text-gray-100">Register</a>
                         </div>
                     </center>
                 `
@@ -740,9 +803,9 @@
                 historyContainer.className = 'history-container'
 
                 if (history.length > 0) {
-                    const historyTitle = document.createElement('h2')
-                    historyTitle.className = 'text-center text-grey'
-                    historyTitle.textContent = 'Pilih Pacar:'
+                    const historyTitle = document.createElement('h3')
+                    historyTitle.className = 'text-center text-gray-100'
+                    historyTitle.textContent = 'Select Pacar AI:'
                     historyContainer.appendChild(historyTitle)
 
                     const historyList = document.createElement('div')
@@ -751,7 +814,7 @@
                     history.forEach((item, index) => {
 
                         const historyItem = document.createElement('button')
-                        historyItem.className = 'flex items-center px-2 py-1 my-1 rounded bg-gray-200 w-full'
+                        historyItem.className = 'flex items-center px-2 py-1 my-1 rounded bg-grey-700 w-full bg-chara'
                         historyItem.onclick = () => handleHistorySelect(item)
                         const avatar = document.createElement('img')
                         avatar.src = `https://chat.pacar-ai.my.id${item.avatar}`
@@ -763,9 +826,10 @@
                         const nameContainer = document.createElement('div')
                         nameContainer.className = 'p-2 text-left min-w-100px'
                         const name = document.createElement('div')
+                        name.className = 'text-gray-100'
                         name.textContent = item.name
                         const status = document.createElement('div')
-                        status.className = 'text-sm text-red-600'
+                        status.className = 'text-sm text-blue-600 mt-2'
                         status.textContent = `${item.status} ${item.character}`
                         nameContainer.appendChild(name)
                         nameContainer.appendChild(status)
@@ -773,13 +837,21 @@
                         const descriptionContainer = document.createElement('div')
                         descriptionContainer.className = 'p-2 text-left'
                         const description = document.createElement('div')
-                        description.className = 'text-sm text-gray-600'
+                        description.className = 'text-sm text-gray-400'
                         description.textContent = item.description
                         descriptionContainer.appendChild(description)
+
+                        const arrowContainer = document.createElement('div')
+                        arrowContainer.className = 'p-2 text-right'
+                        const arrow = document.createElement('div')
+                        arrow.className = 'text-sm text-gray-400'
+                        arrow.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20"><polygon points="15,10 0,0 0,20" fill="currentColor" /></svg>'
+                        arrowContainer.appendChild(arrow)
 
                         historyItem.appendChild(avatar)
                         historyItem.appendChild(nameContainer)
                         historyItem.appendChild(descriptionContainer)
+                        historyItem.appendChild(arrowContainer)
 
                         historyList.appendChild(historyItem)
                     })
@@ -800,18 +872,22 @@
                     relogin.textContent = 'Jika sudah login silahkan tutup dahulu tab ini dan buka kembali'
                     historyContainer.appendChild(relogin)
                 }
+                const buttonContainer = document.createElement('div')
+                buttonContainer.className = 'flex items-center px-2 py-2 my-2 mt-2'
 
                 const newChara = document.createElement('a')
-                newChara.className = 'chara-button mt-2 my-2 mt-2'
-                newChara.textContent = 'Buat Pacar Baru'
+                newChara.className = 'chara-button me-2'
+                newChara.textContent = 'New Chara'
                 newChara.href = "https://chat.pacar-ai.my.id/"
-                historyContainer.appendChild(newChara)
+                buttonContainer.appendChild(newChara)
 
                 const logoutButton = document.createElement('button')
                 logoutButton.className = 'logout-button'
                 logoutButton.textContent = 'Logout'
                 logoutButton.onclick = logout
-                historyContainer.appendChild(logoutButton)
+                buttonContainer.appendChild(logoutButton)
+
+                historyContainer.appendChild(buttonContainer)
 
 
                 content.appendChild(historyContainer)
@@ -885,7 +961,7 @@
                         }
 
                         const messageContent = document.createElement('div')
-                        messageContent.className = `inline-block p-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-grey'}`
+                        messageContent.className = `inline-block p-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-grey text-grey-100'}`
                         messageContent.style.whiteSpace = 'pre-wrap'
 
                         parts.forEach((part, i) => {
@@ -907,7 +983,7 @@
                                 }
 
                                 const codeDiv = document.createElement('div')
-                                codeDiv.className = 'bg-gray-800 text-white p-2 rounded-lg mb-2'
+                                codeDiv.className = 'bg-gray-800 text-white p-2 rounded-lg mb-2 wrap'
 
                                 const pre = document.createElement('pre')
                                 pre.textContent = codeContent
