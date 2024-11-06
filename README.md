@@ -62,6 +62,9 @@ This extension is licensed under the MIT License. See the LICENSE file for detai
 
 ## Release Notes
 
+### 1.2.2
+- **Chore**: Rename Extension.
+
 ### 1.2.1
 - **Fix**: Change enter key to Ctrl+Enter key.
 - **Fix**: Fix bug enter key.
