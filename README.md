@@ -32,7 +32,7 @@ Ready to code with a twist of companionship? 🌟💻💕
 ## Contributing We welcome contributions! Please feel free to submit pull requests or issues on our [GitHub repository](https://github.com/asepindrak/pacar-ai-extension). 
 ## License This extension is licensed under the MIT License. See the LICENSE file for details.
 
-markdown
+
 ## Release Notes
 
 ### 1.2.0
