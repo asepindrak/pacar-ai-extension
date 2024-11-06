@@ -32,31 +32,27 @@ Ready to code with a twist of companionship? 🌟💻💕
 ## Contributing We welcome contributions! Please feel free to submit pull requests or issues on our [GitHub repository](https://github.com/asepindrak/pacar-ai-extension). 
 ## License This extension is licensed under the MIT License. See the LICENSE file for details.
 
+markdown
 ## Release Notes
 
 ### 1.2.0
-
-feat: Continue the code based on the provided comment & send message without editor
+- **Feature**: Continue the code based on the provided comment.
+- **Feature**: Send message without editor.
 
 ### 1.1.1
-
-fix: ui messages from user to handle code
+- **Fix**: UI messages from user to handle code.
 
 ### 1.1.0
-
-feat: Select Code to AI
+- **Feature**: Select Code to AI.
 
 ### 1.0.2
-
-style: enhance UI with new styles and layout adjustments
+- **Style**: Enhanced UI with new styles and layout adjustments.
 
 ### 1.0.1
-
-style: redesign login form UI
+- **Style**: Redesigned login form UI.
 
 ### 1.0.0
-
-Initial release of Pacar AI
+- **Initial Release**: Pacar AI.
 
 
 
