@@ -17,6 +17,35 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "icon": "media/icon.png",
+  "categories": [
+    "AI",
+    "Chat"
+  ],
+  "keywords": [
+    "pacar",
+    "ai",
+    "chat",
+    "girlfriend",
+    "companion",
+    "companionship",
+    "autocomplete",
+    "code analysis",
+    "code completion",
+    "code explanation",
+    "code recommendation",
+    "coding assistant",
+    "gpt",
+    "chatgpt",
+    "java",
+    "javascript",
+    "node",
+    "node.js",
+    "openai",
+    "python",
+    "refactor",
+    "select code",
+    "typescript"
+  ],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
