@@ -2,9 +2,12 @@
 
 ## [Unreleased]
 
-## [1.2.3] - 2024-11-07
+## [1.2.7] - 2024-11-08
 
 ### Added
+
+### 1.2.7
+- **Fix**: Change Code Suggestion key to Shift+Enter key.
 
 ### 1.2.3
 - **Style**: Redesign UI.
