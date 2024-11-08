@@ -593,8 +593,8 @@
         <div id="messageInputContainer" class="p-4 bg-black shadow-md fixed-bottom" style="display: none;">
             <div class="flex items-center">
                 <textarea id="messageInput" placeholder="Type your message..."
-                    class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none h-12 bg-black text-white"
-                    rows="1"></textarea>
+                    class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-6 bg-black text-white">
+                </textarea>
                 <button id="sendMessageButton"
                     class="ml-2 h-12 p-2 flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white rounded">
                     <div id="button-send" class="button-send">
@@ -623,6 +623,8 @@
                 sendMessageButton.addEventListener('click', handleSendMessage)
 
                 const messageInput = document.getElementById('messageInput')
+                messageInput.value = messageInput.value.trim()
+                console.log(`message input: ${messageInput.value} disini`)
                 messageInput.addEventListener('keydown', handleKeyDown)
 
                 window.addEventListener('message', async event => {
@@ -637,9 +639,11 @@
                     }
 
                     const messageInput = document.getElementById('messageInput')
+                    // Menghapus spasi di awal dan akhir pada load
+
                     let message = messageInput.value.trim()
                     if (coding) {
-                        message = "Full Code:\n\n[fullcode]```" + allCode + "```[fullcode]\n\nInstruction: " + message + "\n\n" + "Selected Code:\n\n[selection]```" + coding + "```[selection]"
+                        message = "[fullcode]" + allCode + "[fullcode][labelInstruction]Instruction: [labelInstruction]" + message + "[selection]" + coding + "[selection]"
                     }
                     console.log("send message to API")
                     if (!message) return
@@ -651,6 +655,9 @@
                 if (event.key === 'Enter' && !event.shiftKey) {
                     event.preventDefault()
                     handleSendMessage()
+                } else {
+                    this.style.height = 'auto' // Reset tinggi agar bisa menghitung tinggi yang baru
+                    this.style.height = Math.min(this.scrollHeight, 300) + 'px' // Set tinggi maksimal 300px
                 }
             }
 
@@ -950,7 +957,7 @@
                 messages.forEach((msg, index) => {
                     if (msg.role !== 'system') {
 
-                        const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`|\[selection\][\s\S]*?\[selection\]|\[fullcode\][\s\S]*?\[fullcode\])/g)
+                        const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`|\[selection\][\s\S]*?\[selection\]|\[fullcode\][\s\S]*?\[fullcode\]|\[labelInstruction\][\s\S]*?\[labelInstruction\])/g)
 
                         const messageDiv = document.createElement('div')
                         messageDiv.className = `mb-2 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`
@@ -969,22 +976,18 @@
 
                         parts.forEach((part, i) => {
                             if (part.startsWith('[selection]') && part.endsWith('[selection]')) {
-                                const codeSpan = document.createElement('code')
-                                codeSpan.className = 'bg-gray-800 text-white p-1 rounded'
-                                codeSpan.textContent = 'Full Code'
-                                messageContent.appendChild(codeSpan)
+                                //skip
                             } else if (part.startsWith('[fullcode]') && part.endsWith('[fullcode]')) {
-                                const codeSpan = document.createElement('code')
-                                codeSpan.className = 'bg-gray-800 text-white p-1 rounded'
-                                codeSpan.textContent = 'Selected Code'
-                                messageContent.appendChild(codeSpan)
+                                //skip
+                            } else if (part.startsWith('[labelInstruction]') && part.endsWith('[labelInstruction]')) {
+                                //skip
                             } else if (part.startsWith('```') && part.endsWith('```')) {
                                 let codeContent = part.slice(3, -3).trim()
 
 
                                 const codeLines = codeContent.split('\n')
                                 const firstLine = codeLines[0].trim()
-                                const languageRegex = /^(javascript|python|java|c\+\+|c#|ruby|go|php|typescript|swift|kotlin|json|jsx|tsx)$/i
+                                const languageRegex = /^(javascript|python|java|c\+\+|c#|ruby|go|php|typescript|swift|kotlin|json|jsx|tsx|html|css|xml|c|rust|perl|r)$/i
 
                                 if (languageRegex.test(firstLine)) {
                                     codeContent = codeLines.slice(1).join('\n').trim() // Remove the first line if it matches a language

@@ -61,26 +61,6 @@ function activate(context) {
             });
         }
     }));
-    // Register keybinding untuk Tab
-    const triggerTabCommand = vscode.commands.registerCommand('pacar-ai.triggerTab', () => {
-        console.log("tab key tap");
-        const editor = vscode.window.activeTextEditor;
-        if (editor) {
-            const currentLine = editor.selection.active.line;
-            const instructionLine = editor.document.lineAt(currentLine - 1).text;
-            if (instructionLine === "Press Tab to accept code from Pacar AI...") {
-                vscode.commands.executeCommand('pacar-ai.applyCode').then(() => {
-                    // Kembalikan fungsi asli tombol tab setelah code completion
-                    vscode.commands.executeCommand('editor.action.indentLines');
-                });
-            }
-            else {
-                // Jika tidak ada pesan instruksi, gunakan fungsi asli tombol tab
-                vscode.commands.executeCommand('editor.action.indentLines');
-            }
-        }
-    });
-    context.subscriptions.push(triggerTabCommand); // Pastikan command ini juga terdaftar
 }
 function onUserInput(line) {
     // Simpan line ke riwayat
