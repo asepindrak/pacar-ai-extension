@@ -2,9 +2,13 @@
 
 ## [Unreleased]
 
-## [1.2.7] - 2024-11-08
+## [1.2.9] - 2024-11-09
 
 ### Added
+
+### 1.2.9
+- **Fix**: Change Code Accept to Popup Message
+- **Feature**: Show loading while Pacar AI generate code
 
 ### 1.2.7
 - **Fix**: Change Code Suggestion key to Shift+Enter key.

@@ -97,56 +97,61 @@ async function triggerCodeCompletion(context: vscode.ExtensionContext, comment: 
 		code: `this is the full code from editor ${allCodeData}. continue the code from instruction comment: "${comment}". Provide only the code without triple backtick and programming language, with comments for additional lines.`,
 	};
 
-	const response = await fetch('https://chat.pacar-ai.my.id/api/code', {
-		method: 'POST',
-		headers: {
-			'Authorization': `Bearer ${token}`,
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(body)
-	});
+	// Buat StatusBarItem untuk loading
+	const loadingStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+	loadingStatusBarItem.text = "🔄 Memuat kode dari Pacar AI...";
+	loadingStatusBarItem.show();
 
-	// Cek apakah response berhasil
-	if (!response.ok) {
-		const errorMessage = await response.text();
-		throw new Error(`Error ${response.status}: ${errorMessage}`);
-	}
-
-	// Jika berhasil, ambil data
-	const coding: any = await response.json();
-
-	// Menambahkan hasil sementara ke editor
-	const editor = vscode.window.activeTextEditor;
-	if (editor) {
-		const currentLine = editor.selection.active.line;
-
-		// Tampilkan pesan instruksi
-		const instructionMessage = "Press Tab to accept code from Pacar AI...";
-		editor.edit(editBuilder => {
-			editBuilder.insert(new vscode.Position(currentLine, 0), `${instructionMessage}\n`); // Tampilkan instruksi
-		}).then(() => {
-			// Daftarkan command untuk menerapkan hasil code completion
-			const applyCodeCommand = vscode.commands.registerCommand('pacar-ai.applyCode', () => {
-				editor.edit(editBuilder => {
-					// Hapus pesan instruksi
-					const instructionStartPosition = new vscode.Position(currentLine, 0);
-					const instructionEndPosition = new vscode.Position(currentLine + 1, 0);
-					editBuilder.delete(new vscode.Range(instructionStartPosition, instructionEndPosition));
-
-					// Sisipkan hasil code completion
-					editBuilder.insert(new vscode.Position(currentLine + 1, 0), `${coding}\n`);
-				}).then(() => {
-					// Unregister applyCodeCommand setelah kode disisipkan
-					applyCodeCommand.dispose();
-
-					// Kembalikan fungsi asli tombol tab
-					vscode.commands.executeCommand('editor.action.indentLines');
-				});
-			});
-
-			// Daftarkan command ke context
-			context.subscriptions.push(applyCodeCommand);
+	try {
+		const response = await fetch('https://chat.pacar-ai.my.id/api/code', {
+			method: 'POST',
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(body)
 		});
+
+		// Cek apakah response berhasil
+		if (!response.ok) {
+			const errorMessage = await response.text();
+			throw new Error(`Error ${response.status}: ${errorMessage}`);
+		}
+
+		// Jika berhasil, ambil data
+		const coding: any = await response.json();
+
+		// Menambahkan hasil sementara ke editor
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			const currentLine = editor.selection.active.line;
+
+			// Tampilkan pesan instruksi
+			const instructionMessage = "Pilih untuk menerima kode dari Pacar AI...";
+
+			vscode.window.showInformationMessage(instructionMessage, { modal: true }, "Terima Kode", "Tolak Kode").then(selection => {
+				if (selection === "Terima Kode") {
+					// Jika pengguna memilih 'Terima Kode'
+					editor.edit(editBuilder => {
+						// Hapus pesan instruksi jika ada
+						const instructionStartPosition = new vscode.Position(currentLine, 0);
+						const instructionEndPosition = new vscode.Position(currentLine + 1, 0);
+						editBuilder.delete(new vscode.Range(instructionStartPosition, instructionEndPosition));
+
+						// Sisipkan hasil code completion
+						editBuilder.insert(new vscode.Position(currentLine, 0), `${coding}\n`);
+					});
+				} else if (selection === "Tolak Kode") {
+					// Jika pengguna memilih 'Tolak Kode', lakukan sesuatu jika perlu
+					console.log("Kode ditolak.");
+				}
+			});
+		}
+	} catch (error) {
+		console.error(error);
+	} finally {
+		// Sembunyikan StatusBarItem loading setelah selesai
+		loadingStatusBarItem.hide();
 	}
 }
 
