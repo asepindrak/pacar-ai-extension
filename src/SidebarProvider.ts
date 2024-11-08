@@ -55,9 +55,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const htmlPath = path.join(this._extensionUri.fsPath, 'media', 'webview.html');
     let htmlContent = fs.readFileSync(htmlPath, 'utf8');
     const logoPath = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'logo.png')));
+    const stylesPath = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'styles.css')));
+    const prismPath = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'prism.css')));
+    const prismJSPath = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'prism.js')));
 
     // Replace placeholder with actual logo path htmlContent = htmlContent.replace('%LOGO_PATH%', logoPath.toString());
     htmlContent = htmlContent.replace('%LOGO_PATH%', logoPath.toString());
+    htmlContent = htmlContent.replace('%STYLES_PATH%', stylesPath.toString());
+    htmlContent = htmlContent.replace('%PRISM_PATH%', prismPath.toString());
+    htmlContent = htmlContent.replace('%PRISMJS_PATH%', prismJSPath.toString());
     return htmlContent;
   }
 }

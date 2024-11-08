@@ -6,6 +6,9 @@
 
 ### Added
 
+### 1.3.0
+- **Feature**: Add syntax highlighting and code caching
+
 ### 1.2.11
 - **Style**: Redesign Chat UI
 

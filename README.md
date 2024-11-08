@@ -66,6 +66,9 @@ This extension is licensed under the MIT License. See the LICENSE file for detai
 
 ## Release Notes
 
+### 1.3.0
+- **Feature**: Add syntax highlighting and code caching
+
 ### 1.2.11
 - **Style**: Redesign Chat UI
 
