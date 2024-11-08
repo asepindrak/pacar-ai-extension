@@ -7,6 +7,10 @@ Imagine having an AI Girlfriend who not only assists you with coding but also ke
 
 Ready to code with a twist of companionship? 🌟💻💕
 
+![Pacar AI Image 1](media/pacar-ai-image-1.gif) <!-- Menambahkan image pertama -->
+![Pacar AI Image 2](media/pacar-ai-image-2.gif) <!-- Menambahkan image kedua -->
+        
+
 
 ## Features 
 
