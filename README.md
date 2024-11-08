@@ -66,6 +66,9 @@ This extension is licensed under the MIT License. See the LICENSE file for detai
 
 ## Release Notes
 
+### 1.2.10
+- **Fix**: Fixing context for selected code
+
 ### 1.2.9
 - **Fix**: Change Code Accept to Popup Message
 - **Feature**: Show loading while Pacar AI generate code

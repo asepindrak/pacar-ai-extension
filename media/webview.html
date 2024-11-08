@@ -628,14 +628,18 @@
                 window.addEventListener('message', async event => {
                     const messageText = event.data // Menerima pesan dari extension
                     let coding = ""
+                    let allCode = ""
                     if (messageText.text) {
                         coding = messageText.text
+                    }
+                    if (messageText.allCode) {
+                        allCode = messageText.allCode
                     }
 
                     const messageInput = document.getElementById('messageInput')
                     let message = messageInput.value.trim()
                     if (coding) {
-                        message = message + " : " + "[selection]```" + coding + "```[selection]"
+                        message = "Full Code:\n\n[fullcode]```" + allCode + "```[fullcode]\n\nInstruction: " + message + "\n\n" + "Selected Code:\n\n[selection]```" + coding + "```[selection]"
                     }
                     console.log("send message to API")
                     if (!message) return
@@ -946,7 +950,7 @@
                 messages.forEach((msg, index) => {
                     if (msg.role !== 'system') {
 
-                        const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`|\[selection\][\s\S]*?\[selection\])/g)
+                        const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`|\[selection\][\s\S]*?\[selection\]|\[fullcode\][\s\S]*?\[fullcode\])/g)
 
                         const messageDiv = document.createElement('div')
                         messageDiv.className = `mb-2 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`
@@ -967,7 +971,12 @@
                             if (part.startsWith('[selection]') && part.endsWith('[selection]')) {
                                 const codeSpan = document.createElement('code')
                                 codeSpan.className = 'bg-gray-800 text-white p-1 rounded'
-                                codeSpan.textContent = 'code'
+                                codeSpan.textContent = 'Full Code'
+                                messageContent.appendChild(codeSpan)
+                            } else if (part.startsWith('[fullcode]') && part.endsWith('[fullcode]')) {
+                                const codeSpan = document.createElement('code')
+                                codeSpan.className = 'bg-gray-800 text-white p-1 rounded'
+                                codeSpan.textContent = 'Selected Code'
                                 messageContent.appendChild(codeSpan)
                             } else if (part.startsWith('```') && part.endsWith('```')) {
                                 let codeContent = part.slice(3, -3).trim()

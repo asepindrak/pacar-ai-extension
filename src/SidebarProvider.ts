@@ -23,10 +23,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       if (message.command === 'getSelectedText') {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
+          const allCode = editor.document.getText();
           const selection = editor.selection;
           const text = editor.document.getText(selection);
           // Kirim ke webview
-          webviewView.webview.postMessage({ text });
+          webviewView.webview.postMessage({ text, allCode });
         } else {
           // Kirim ke webview
           webviewView.webview.postMessage({ text: '' });
