@@ -48,7 +48,7 @@
 
                 const messageInput = document.getElementById('messageInput')
                 messageInput.value = messageInput.value.trim()
-                console.log(`message input: ${messageInput.value} disini`)
+
                 messageInput.addEventListener('keydown', handleKeyDown)
 
                 window.addEventListener('message', async event => {
@@ -392,7 +392,6 @@
 
                 messages.forEach((msg, index) => {
                     if (msg.role !== 'system') {
-                        console.log(msg.message)
                         const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`|\[selection\][\s\S]*?\[selection\]|\[fullcode\][\s\S]*?\[fullcode\]|\[labelInstruction\][\s\S]*?\[labelInstruction\])/g)
 
                         const messageDiv = document.createElement('div')
