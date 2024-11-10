@@ -6,6 +6,9 @@
 
 ### Added
 
+### 1.4.0
+- **Feature**: Added an avatar to speak to you
+
 ### 1.3.0
 - **Feature**: Add syntax highlighting and code caching
 

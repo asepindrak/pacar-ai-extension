@@ -9,12 +9,18 @@
         <link rel="stylesheet" href="%PRISM_PATH%"> <!-- Link to the Prism CSS for syntax highlighting -->
         <link rel="stylesheet" href="%STYLES_PATH%">
 
-
     </head>
 
     <body>
+
         <div id="content" class="content"></div>
         <div id="message" class="message"></div>
+        <button id="speakButton" class="hidden">speak</button>
+        <input id="talkText" class="hidden" />
+        <input id="maxTalks" class="hidden" />
+        <audio id="audio" class="welcome" autoplay>
+            <source id="audiosource" src="%AUDIO%" />
+        </audio>
         <div id="messageInputContainer" class="p-4 bg-black shadow-md fixed-bottom" style="display: none;">
             <div class="flex items-center">
                 <textarea id="messageInput" placeholder="Type your message..."
@@ -33,8 +39,16 @@
                 </button>
             </div>
         </div>
-        <script>
-
+        <script type="importmap">
+                    {   
+                        "imports": {
+                            "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+                            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/",
+                            "@pixiv/three-vrm": "%VRM%"
+                        }
+                    }
+                </script>
+        <script type="module">
             document.addEventListener('DOMContentLoaded', function () {
                 const token = localStorage.getItem('token')
                 const userId = localStorage.getItem('userId')
@@ -157,14 +171,16 @@
                 const content = document.getElementById('content')
                 content.innerHTML = `
                     <center>
-                        <div class="login-container mt-5">
-                            <img src="%LOGO_PATH%" alt="Logo">
-                            <form id="loginForm" action="#" method="post">
-                                <input type="text" name="email" placeholder="Masukkan email" required />
-                                <input type="password" name="password" placeholder="Masukkan password" required />
-                                <button type="submit">Login</button>
-                            </form>
-                            <a href="https://pacar-ai.my.id/" target="_blank" class="mt-2 my-2 text-gray-100">Register</a>
+                        <div class="login-wrapper mt-5">
+                            <div class="login-container">
+                                <img src="%LOGO_PATH%" alt="Logo">
+                                <form id="loginForm" action="#" method="post">
+                                    <input type="text" name="email" placeholder="Masukkan email" required />
+                                    <input type="password" name="password" placeholder="Masukkan password" required />
+                                    <button type="submit">Login</button>
+                                </form>
+                                <a href="https://pacar-ai.my.id/" target="_blank" class="mt-2 my-2 text-gray-100">Register</a>
+                            </div>
                         </div>
                     </center>
                 `
@@ -205,7 +221,9 @@
 
                     messageDiv.textContent = 'Login berhasil!'
                     messageDiv.className = 'message success'
-
+                    setTimeout(() => {
+                        messageDiv.textContent = ''
+                    }, 3000)
                     // Fetch and display chat history
                     fetchHistory(data.userId)
                 } catch (error) {
@@ -389,7 +407,8 @@
 
                 const chatContainer = document.createElement('div')
                 chatContainer.className = 'flex-grow overflow-y-auto p-4 bg-chat custom-scrollbar'
-
+                let talkDuration = 0
+                let talkMessage = ""
                 messages.forEach((msg, index) => {
                     if (msg.role !== 'system') {
                         const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`|\[selection\][\s\S]*?\[selection\]|\[fullcode\][\s\S]*?\[fullcode\]|\[labelInstruction\][\s\S]*?\[labelInstruction\])/g)
@@ -459,6 +478,14 @@
                                 const textSpan = document.createElement('span')
                                 textSpan.textContent = part
                                 messageContent.appendChild(textSpan)
+                                if (messages.length - 1 == index) {
+                                    if (msg.role === 'assistant') {
+                                        talkDuration += part.length
+                                        talkMessage = `${talkMessage}. ${part}`
+                                        console.log(part)
+                                        console.log(talkDuration)
+                                    }
+                                }
                             }
                         })
 
@@ -467,9 +494,138 @@
                     }
                 })
 
+                if (talkDuration > 0) {
+                    let talking = talkDuration / 4
+                    startTalking(talking, talkMessage)
+                }
+
                 content.appendChild(chatContainer)
             }
+            let lastBlinkTime = 0 // Waktu terakhir kali blink dipanggil
+            let lastBlinkTime2 = 0 // Waktu terakhir kali blink dipanggil
+            let lastNutateTime = 0 // Waktu terakhir kali blink dipanggil
+            // Memanggil talk selama 50 detik
 
+            async function startTalking(maxTalks, message) {
+                document.getElementById('talkText').value = message
+                document.getElementById('maxTalks').value = maxTalks
+                setTimeout(() => {
+                    document.getElementById('speakButton').click()
+
+                }, 200)
+
+
+
+            }
+
+            var isAudioPlay = true
+
+            var audioElements = document.getElementsByTagName('audio'),
+                sounds = {}
+
+            for (var i = 0; i < audioElements.length; i++) {
+                sounds[audioElements[i].className] = audioElements[i]
+            }
+
+
+            document.getElementById('speakButton').addEventListener('click', async function () {
+                setTimeout(async () => {
+                    const text = document.getElementById('talkText').value
+                    const maxTalks = document.getElementById('maxTalks').value
+                    const userId = localStorage.getItem("userId")
+                    const response = await fetch(`http://127.0.0.1:8000/speak?text=${encodeURIComponent(text)}&audio=${encodeURIComponent(userId)}`)
+
+                    if (response.ok) {
+                        const audioUrl = URL.createObjectURL(await response.blob())
+                        const sourcediv = document.getElementById('audiosource')
+                        sourcediv.src = audioUrl
+                        for (var i = 0; i < audioElements.length; i++) {
+                            sounds[audioElements[i].className] = audioElements[i]
+                        }
+                        if (isAudioPlay) {
+                            var audiotag = document.getElementById("audio")
+                            audiotag.volume = 1
+                        }
+                        playSound('welcome')
+
+                        if (!isAudioPlay) {
+                            stopAudio()
+                        }
+                        const talkFunctions = [talk, talk2] // Hapus startBlinking dari sini untuk kontrol lebih baik
+                        let count = 0 // Untuk menghitung berapa kali talk dipanggil
+                        setTimeout(() => {
+                            const talkInterval = setInterval(() => {
+                                const randomFunction = talkFunctions[Math.floor(Math.random() * talkFunctions.length)]
+                                randomFunction() // Panggil fungsi yang dipilih secara acak
+
+                                // Cek waktu sebelum memanggil startBlinking
+                                const currentTime = Date.now()
+                                if (currentTime - lastBlinkTime > 5000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
+                                    startBlinking()
+                                    lastBlinkTime = currentTime // Update waktu terakhir blink
+                                }
+                                if (currentTime - lastBlinkTime2 > 6000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
+                                    startBlinking()
+                                    lastBlinkTime2 = currentTime // Update waktu terakhir blink
+                                }
+                                if (currentTime - lastNutateTime > 4000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
+                                    nutate()
+                                    lastNutateTime = currentTime // Update waktu terakhir blink
+                                }
+                                // Tunggu hingga audio selesai diputar
+                                var audiotag = document.getElementById("audio")
+                                audiotag.addEventListener('ended', () => {
+                                    console.log('Audio finished playing')
+                                    clearInterval(talkInterval)
+                                    basicMove()
+                                    // Lakukan sesuatu setelah audio selesai, misalnya reset animasi
+                                })
+                            }, 300) // Setiap 300ms
+                        }, 200)
+
+                    } else {
+                        console.error('Error fetching audio:', response.statusText)
+                    }
+
+
+
+                }, 200)
+
+            })
+            // Solves chrome for andriod issue 178297 Require user gesture
+            // https://code.google.com/p/chromium/issues/detail?id=178297
+            // Fix based on code from http://blog.foolip.org/2014/02/10/media-playback-restrictions-in-blink/
+            if (mediaPlaybackRequiresUserGesture()) {
+                window.addEventListener('keydown', removeBehaviorsRestrictions)
+                window.addEventListener('mousedown', removeBehaviorsRestrictions)
+                window.addEventListener('touchstart', removeBehaviorsRestrictions)
+            }
+
+            function mediaPlaybackRequiresUserGesture() {
+                // test if play() is ignored when not called from an input event handler
+                var video = document.createElement('video')
+                video.play()
+                return video.paused
+            }
+
+            function removeBehaviorsRestrictions() {
+                for (var i = 0; i < audioElements.length; i++) {
+                    audioElements[i].load()
+                }
+
+                window.removeEventListener('keydown', removeBehaviorsRestrictions)
+                window.removeEventListener('mousedown', removeBehaviorsRestrictions)
+                window.removeEventListener('touchstart', removeBehaviorsRestrictions)
+            }
+
+            function playSound(sound) {
+                for (var key in sounds) {
+                    sounds[key].pause()
+                }
+
+                sounds[sound].load()
+                sounds[sound].play()
+            }
             function handleCopy(code) {
                 navigator.clipboard.writeText(code).then(() => {
                     alert('Copied!')
@@ -482,9 +638,323 @@
                 showLoginForm()
             }
 
+            function stopAudio() {
+                console.log("stop audio")
+                var audiotag = document.getElementById("audio")
+                audiotag.volume = 0
+            }
+
+            document.getElementById('audioControl').addEventListener('change', function () {
+                console.log(this.value)
+                const selectedValue = this.value
+                const audiotag = document.getElementById('audio')
+
+                if (selectedValue === 'play') {
+                    isAudioPlay = true
+                    audiotag.volume = 1
+                } else if (selectedValue === 'mute') {
+                    isAudioPlay = false
+                    stopAudio()
+                }
+            })
+
             const vscode = acquireVsCodeApi()
+
+            import * as THREE from 'three'
+            import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+            import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+            import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm'
+
+            // renderer
+            const renderer = new THREE.WebGLRenderer()
+            renderer.setSize(window.innerWidth, window.innerHeight)
+            renderer.setPixelRatio(window.devicePixelRatio)
+            //background
+            renderer.setClearColor(0x1f1f1f, 0) // Warna latar belakang dengan transparansi
+            var avatardiv = document.getElementById("avatar")
+            avatardiv.appendChild(renderer.domElement)
+
+            // camera
+            const camera = new THREE.PerspectiveCamera(30.0, window.innerWidth / window.innerHeight, 0.1, 20.0)
+            camera.position.set(0.0, 1.0, 2.5)
+
+            // camera controls
+            const controls = new OrbitControls(camera, renderer.domElement)
+            controls.screenSpacePanning = true
+            controls.target.set(0.0, 1.0, 0.0)
+            controls.update()
+
+
+            // scene
+            const scene = new THREE.Scene()
+
+            // light
+            const light = new THREE.DirectionalLight(0xffffff, Math.PI)
+            light.position.set(1.0, 1.0, 1.0).normalize()
+            scene.add(light)
+
+            // gltf and vrm
+            let currentVrm = undefined
+            const loader = new GLTFLoader()
+            loader.crossOrigin = 'anonymous'
+
+            loader.register((parser) => {
+                return new VRMLoaderPlugin(parser)
+            })
+
+            loader.load(
+                '%CHARA%',
+                (gltf) => {
+                    const vrm = gltf.userData.vrm
+
+                    // calling these functions greatly improves the performance
+                    VRMUtils.removeUnnecessaryVertices(gltf.scene)
+                    VRMUtils.removeUnnecessaryJoints(gltf.scene)
+
+                    // Disable frustum culling
+                    vrm.scene.traverse((obj) => {
+                        obj.frustumCulled = false
+                    })
+
+                    // Tambahkan VRM ke scene
+                    scene.add(vrm.scene)
+                    // Rotasi model agar menghadap ke depan
+                    vrm.scene.rotation.y = Math.PI // Memutar 180 derajat di sumbu Y
+                    // Tambahkan BoxHelper untuk melihat bounding box model
+                    const boxHelper = new THREE.BoxHelper(vrm.scene, 0xffff00)
+                    // scene.add(boxHelper)
+
+                    currentVrm = vrm
+                },
+                (progress) => console.log('Loading model...', 100.0 * (progress.loaded / progress.total), '%'),
+                (error) => console.error(error)
+            )
+
+            // helpers
+            const gridHelper = new THREE.GridHelper(10, 10)
+            // scene.add(gridHelper)
+
+            const axesHelper = new THREE.AxesHelper(5)
+            // scene.add(axesHelper)
+            // animate
+            const clock = new THREE.Clock()
+            let basicInterval
+            let smileInterval
+            let blinkInterval
+            let basicMoveId
+            let nutateId
+            let smileId
+            let talkId
+            let talk2Id
+            let blinkId
+            let blink2Id
+
+            function basicMove() {
+                resetAnimate()
+                basicMoveId = requestAnimationFrame(basicMove)
+                if (currentVrm) {
+                    var deltaTime = clock.getDelta()
+                    const morphTargets = currentVrm.humanoid.hair
+
+
+                    const s = 0.25 * Math.PI * Math.sin(Math.PI * clock.elapsedTime)
+                    // tweak expressions for smile and blink
+                    const smileIntensity = Math.sin(0.7 * Math.PI * clock.elapsedTime) * 0.1 // Ubah ini untuk mengatur intensitas senyum
+                    const hipsIntensity = Math.sin(0.2 * Math.PI * clock.elapsedTime) * 0.1
+                    const blinkIntensity = Math.sin(0.3 * Math.PI * clock.elapsedTime) * 0.2 // Berkedip
+                    const blinkIntensityLeft = Math.sin(0.3 * Math.PI * clock.elapsedTime) * 0.2 // Berkedip
+                    currentVrm.expressionManager.setValue('aa', smileIntensity) // Ekspresi senyum
+
+                    currentVrm.expressionManager.setValue('blinkRight', 0.1) // Mengatur berkedip kanan
+                    currentVrm.expressionManager.setValue('blinkLeft', 0.1) // Mengatur berkedip kanan
+
+                    currentVrm.humanoid.getNormalizedBoneNode('leftUpperArm').rotation.z = 1.5
+                    currentVrm.humanoid.getNormalizedBoneNode('rightUpperArm').rotation.z = -1.5
+
+                    currentVrm.humanoid.getNormalizedBoneNode('rightLowerLeg').rotation.y = 0.2
+                    currentVrm.humanoid.getNormalizedBoneNode('rightUpperLeg').rotation.y = 0.2
+                    currentVrm.humanoid.getNormalizedBoneNode('hips').rotation.y = 0.3 * hipsIntensity
+
+                    currentVrm.update(deltaTime)
+                }
+                renderer.render(scene, camera)
+            }
+            function nutate() {
+                resetAnimate()
+                nutateId = requestAnimationFrame(nutate)
+                if (currentVrm) {
+                    var deltaTime = clock.getDelta()
+                    const morphTargets = currentVrm.humanoid.hair
+
+
+                    const s = 0.25 * Math.PI * Math.sin(Math.PI * clock.elapsedTime)
+                    // tweak expressions for smile and blink
+                    const nutateIntensity = Math.sin(0.1 * Math.PI * clock.elapsedTime) * 0.1 // Ubah ini untuk mengatur intensitas senyum
+
+                    currentVrm.humanoid.getNormalizedBoneNode('neck').rotation.y = nutateIntensity * 0.2
+                    // tweak expressions for smile and blink
+
+                    currentVrm.humanoid.getNormalizedBoneNode('neck').rotation.x = nutateIntensity * 0.2
+
+                    currentVrm.update(deltaTime)
+                }
+                renderer.render(scene, camera)
+            }
+            function smile() {
+                resetAnimate()
+                smileId = requestAnimationFrame(smile)
+                if (currentVrm) {
+                    var deltaTime = clock.getDelta()
+                    const smileIntensity = 0.2 // Ubah senyum dengan intensitas acak
+                    currentVrm.expressionManager.setValue('blinkRight', 0.1) // Mengatur berkedip kanan
+                    currentVrm.expressionManager.setValue('blinkLeft', 0.1) // Mengatur berkedip kanan
+                    currentVrm.expressionManager.setValue('aa', smileIntensity) // Ekspresi senyum
+                    currentVrm.update(deltaTime)
+                }
+                renderer.render(scene, camera)
+                setTimeout(() => {
+                    basicMove()
+                }, 700)
+            }
+            function talk() {
+                resetAnimate()
+                talkId = requestAnimationFrame(talk)
+                if (currentVrm) {
+                    var deltaTime = clock.getDelta()
+                    const smileIntensity = 1 // Ubah senyum dengan intensitas acak
+                    currentVrm.expressionManager.setValue('aa', smileIntensity + 2) // Ekspresi senyum
+                    currentVrm.update(deltaTime)
+                }
+                renderer.render(scene, camera)
+                setTimeout(() => {
+                    basicMove()
+                }, 200)
+            }
+            function talk2() {
+                resetAnimate()
+                talk2Id = requestAnimationFrame(talk2)
+                if (currentVrm) {
+                    var deltaTime = clock.getDelta()
+                    const smileIntensity = 1 // Ubah senyum dengan intensitas acak
+                    currentVrm.expressionManager.setValue('aa', smileIntensity - 0.5) // Ekspresi senyum
+                    currentVrm.update(deltaTime)
+                }
+                renderer.render(scene, camera)
+                setTimeout(() => {
+                    basicMove()
+                }, 200)
+            }
+            function startBlinking() {
+                resetAnimate()
+                blinkId = requestAnimationFrame(startBlinking)
+                if (currentVrm) {
+                    var deltaTime = clock.getDelta()
+                    const s = 0.25 * Math.PI * Math.sin(Math.PI)
+                    // tweak expressions for smile and blink
+                    const smileIntensity = Math.sin(2 * Math.PI) * 0.5 // Ubah ini untuk mengatur intensitas senyum
+                    const blinkIntensity = Math.sin(2 * Math.PI) * 2 // Berkedip
+                    const blinkIntensityLeft = Math.sin(2 * Math.PI) * 2 // Berkedip
+                    currentVrm.expressionManager.setValue('aa', smileIntensity) // Ekspresi senyum
+                    currentVrm.expressionManager.setValue('blinkRight', 0.8 + blinkIntensity) // Ekspresi berkedip kanan
+                    currentVrm.expressionManager.setValue('blinkLeft', 0.8 + blinkIntensityLeft) // Ekspresi berkedip kiri
+                    currentVrm.expressionManager.setValue('head', 0.5) // Mengatur ekspresi kepala
+                    // Gerakan kepala ke kanan sedikit
+                    const headTilt = Math.sin(2 * Math.PI) * 0.02 // Ubah 0.1 untuk mengatur sudut kemiringan
+                    currentVrm.humanoid.getNormalizedBoneNode('neck').rotation.y = headTilt
+                    currentVrm.humanoid.getNormalizedBoneNode('neck').rotation.x = -headTilt
+
+                    // Atur tangan agar mengarah ke bawah
+                    // currentVrm.humanoid.getNormalizedBoneNode('leftUpperArm').rotation.x = Math.PI / 2 // Tangan kiri di bawah
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightUpperArm').rotation.x = Math.PI / 2 // Tangan kanan di bawah
+                    currentVrm.humanoid.getNormalizedBoneNode('leftUpperArm').rotation.z = 1.5
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightUpperArm').rotation.x = s
+
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightUpperArm').rotation.x = 0.5
+                    currentVrm.humanoid.getNormalizedBoneNode('rightUpperArm').rotation.z = -1.5
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightUpperArm').rotation.z = -1.2
+
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightLowerArm').rotation.x = -0.3
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightLowerArm').rotation.y = 2.5
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightLowerArm').rotation.z = Math.sin(2 * Math.PI * clock.elapsedTime) * 0.01
+
+                    currentVrm.humanoid.getNormalizedBoneNode('rightLowerLeg').rotation.y = 0.2
+                    currentVrm.humanoid.getNormalizedBoneNode('rightUpperLeg').rotation.y = 0.2
+                    currentVrm.update(deltaTime)
+                }
+                renderer.render(scene, camera)
+
+                setTimeout(() => {
+                    basicMove()
+                }, 200)
+            }
+            function startBlinking2() {
+                resetAnimate()
+                blink2Id = requestAnimationFrame(startBlinking2)
+                if (currentVrm) {
+                    var deltaTime = clock.getDelta()
+                    const s = 0.25 * Math.PI * Math.sin(Math.PI)
+                    // tweak expressions for smile and blink
+                    const smileIntensity = Math.sin(2 * Math.PI) * 0.5 // Ubah ini untuk mengatur intensitas senyum
+                    const blinkIntensity = Math.sin(2 * Math.PI) * 2 // Berkedip
+                    const blinkIntensityLeft = Math.sin(2 * Math.PI) * 2 // Berkedip
+                    currentVrm.expressionManager.setValue('aa', smileIntensity) // Ekspresi senyum
+                    currentVrm.expressionManager.setValue('blinkRight', 0.1) // Ekspresi berkedip kanan
+                    currentVrm.expressionManager.setValue('blinkLeft', 0.1) // Ekspresi berkedip kiri
+                    currentVrm.expressionManager.setValue('head', 0.5) // Mengatur ekspresi kepala
+                    // Gerakan kepala ke kanan sedikit
+                    const headTilt = Math.sin(2 * Math.PI) * 0.02 // Ubah 0.1 untuk mengatur sudut kemiringan
+                    currentVrm.humanoid.getNormalizedBoneNode('neck').rotation.y = headTilt
+                    currentVrm.humanoid.getNormalizedBoneNode('neck').rotation.x = -headTilt
+
+                    // Atur tangan agar mengarah ke bawah
+                    // currentVrm.humanoid.getNormalizedBoneNode('leftUpperArm').rotation.x = Math.PI / 2 // Tangan kiri di bawah
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightUpperArm').rotation.x = Math.PI / 2 // Tangan kanan di bawah
+                    currentVrm.humanoid.getNormalizedBoneNode('leftUpperArm').rotation.z = 1.5
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightUpperArm').rotation.x = s
+
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightUpperArm').rotation.x = 0.5
+                    currentVrm.humanoid.getNormalizedBoneNode('rightUpperArm').rotation.z = -1.5
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightUpperArm').rotation.z = -1.2
+
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightLowerArm').rotation.x = -0.3
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightLowerArm').rotation.y = 2.5
+                    // currentVrm.humanoid.getNormalizedBoneNode('rightLowerArm').rotation.z = Math.sin(2 * Math.PI * clock.elapsedTime) * 0.01
+
+                    currentVrm.humanoid.getNormalizedBoneNode('rightLowerLeg').rotation.y = 0.2
+                    currentVrm.humanoid.getNormalizedBoneNode('rightUpperLeg').rotation.y = 0.2
+                    currentVrm.update(deltaTime)
+                }
+                renderer.render(scene, camera)
+
+                setTimeout(() => {
+                    basicMove()
+                }, 200)
+            }
+
+            function resetAnimate() {
+                cancelAnimationFrame(basicMoveId)
+                cancelAnimationFrame(nutateId)
+                cancelAnimationFrame(smileId)
+                cancelAnimationFrame(talkId)
+                cancelAnimationFrame(talk2Id)
+                cancelAnimationFrame(blinkId)
+                cancelAnimationFrame(blink2Id)
+            }
+            setTimeout(() => {
+                basicMove()
+            }, 1000)
         </script>
         <script src="%PRISMJS_PATH%"></script> <!-- Include the Prism JS for syntax highlighting functionality -->
+        <div id="avatar">
+            <div id="stopAudioContainer" class="flex justify-center mt-4 fixed-button">
+                <select id="audioControl" class="h-12 p-2 flex items-center justify-center text-white bg-grey rounded">
+                    <option value="play">Play Audio</option>
+                    <option value="mute">Mute Audio</option>
+                </select>
+            </div>
+
+        </div>
+
     </body>
 
 </html>
