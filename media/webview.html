@@ -533,7 +533,7 @@
                     const text = document.getElementById('talkText').value
                     const maxTalks = document.getElementById('maxTalks').value
                     const userId = localStorage.getItem("userId")
-                    const response = await fetch(`http://127.0.0.1:8000/speak?text=${encodeURIComponent(text)}&audio=${encodeURIComponent(userId)}`)
+                    const response = await fetch(`http://103.250.10.249:8886/speak?text=${encodeURIComponent(text)}&audio=${encodeURIComponent(userId)}`)
 
                     if (response.ok) {
                         const audioUrl = URL.createObjectURL(await response.blob())

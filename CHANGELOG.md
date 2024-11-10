@@ -6,6 +6,9 @@
 
 ### Added
 
+### 1.4.1
+- **Chore**: Change api audio
+
 ### 1.4.0
 - **Feature**: Added an avatar to speak to you
 
