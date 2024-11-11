@@ -58,9 +58,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const stylesPath = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'styles.css')));
     const prismPath = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'prism.css')));
     const prismJSPath = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'prism.js')));
-    const chara = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'nahihi.vrm')));
+    const chara = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'Remia Karina.vrm')));
     const audio = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'welcome.mp3')));
     const vrm = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'node_modules/@pixiv/three-vrm/lib/', 'three-vrm.module.js')));
+    const background = webview.asWebviewUri(vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'celestia-bg.jpg')));;
 
     // Replace placeholder with actual logo path htmlContent = htmlContent.replace('%LOGO_PATH%', logoPath.toString());
     htmlContent = htmlContent.replace('%LOGO_PATH%', logoPath.toString());
@@ -70,6 +71,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     htmlContent = htmlContent.replace('%CHARA%', chara.toString());
     htmlContent = htmlContent.replace('%VRM%', vrm.toString());
     htmlContent = htmlContent.replace('%AUDIO%', audio.toString());
+    htmlContent = htmlContent.replace('%BACKGROUND%', background.toString());
     return htmlContent;
   }
 }

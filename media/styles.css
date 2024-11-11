@@ -608,7 +608,6 @@ canvas {
     position: fixed;
     left: 0;
     bottom: 0;
-    width: 250px;
     height: 250px;
     z-index: 99999;
 }
@@ -641,4 +640,8 @@ canvas {
     position: fixed;
     left: 50px;
     bottom: 50px;
+}
+
+#audioControl {
+    opacity: 0.7;
 }

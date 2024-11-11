@@ -8,7 +8,14 @@
         <!-- Include style and script from media/prism.css, media/prism.js -->
         <link rel="stylesheet" href="%PRISM_PATH%"> <!-- Link to the Prism CSS for syntax highlighting -->
         <link rel="stylesheet" href="%STYLES_PATH%">
-
+        <style>
+            #avatar {
+                background: url('%BACKGROUND%') !important;
+                width: 100% !important;
+                background-repeat: no-repeat;
+                background-size: contain;
+            }
+        </style>
     </head>
 
     <body>
@@ -441,7 +448,7 @@
 
                                 const codeLines = codeContent.split('\n')
                                 const firstLine = codeLines[0].trim()
-                                const languageRegex = /^(javascript|python|java|c\+\+|c#|ruby|go|php|typescript|swift|kotlin|json|jsx|tsx|html|css|xml|c|rust|perl|r)$/i
+                                const languageRegex = /^(javascript|python|java|c\+\+|c#|ruby|go|php|typescript|swift|kotlin|json|jsx|tsx|html|css|xml|c|rust|perl|r|bash)$/i
 
                                 if (languageRegex.test(firstLine)) {
                                     codeContent = codeLines.slice(1).join('\n').trim() // Remove the first line if it matches a language
@@ -474,6 +481,12 @@
                                 codeSpan.className = 'bg-gray-800 text-white p-1 rounded'
                                 codeSpan.textContent = inlineCode
                                 messageContent.appendChild(codeSpan)
+                                if (messages.length - 1 == index) {
+                                    if (msg.role === 'assistant') {
+                                        talkDuration += part.length
+                                        talkMessage = `${talkMessage}. ${part}`
+                                    }
+                                }
                             } else {
                                 const textSpan = document.createElement('span')
                                 textSpan.textContent = part
@@ -482,8 +495,6 @@
                                     if (msg.role === 'assistant') {
                                         talkDuration += part.length
                                         talkMessage = `${talkMessage}. ${part}`
-                                        console.log(part)
-                                        console.log(talkDuration)
                                     }
                                 }
                             }
@@ -501,13 +512,41 @@
 
                 content.appendChild(chatContainer)
             }
+
+            async function translate(text) {
+                const body = {
+                    text
+                }
+                const response = await fetch('https://chat.pacar-ai.my.id/api/translate', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                })
+
+                // Cek apakah response berhasil
+                if (!response.ok) {
+                    const errorMessage = await response.text()
+                    throw new Error(`Error ${response.status}: ${errorMessage}`)
+                }
+
+                // Jika berhasil, ambil data
+                const translation = await response.json()
+                return translation
+            }
+
             let lastBlinkTime = 0 // Waktu terakhir kali blink dipanggil
             let lastBlinkTime2 = 0 // Waktu terakhir kali blink dipanggil
             let lastNutateTime = 0 // Waktu terakhir kali blink dipanggil
             // Memanggil talk selama 50 detik
 
             async function startTalking(maxTalks, message) {
-                document.getElementById('talkText').value = message
+                let talk = await translate(message)
+
+                console.log(talk)
+                document.getElementById('talkText').value = talk
                 document.getElementById('maxTalks').value = maxTalks
                 setTimeout(() => {
                     document.getElementById('speakButton').click()
@@ -530,10 +569,10 @@
 
             document.getElementById('speakButton').addEventListener('click', async function () {
                 setTimeout(async () => {
-                    const text = document.getElementById('talkText').value
-                    const maxTalks = document.getElementById('maxTalks').value
+                    let text = document.getElementById('talkText').value
                     const userId = localStorage.getItem("userId")
-                    const response = await fetch(`http://103.250.10.249:8886/speak?text=${encodeURIComponent(text)}&audio=${encodeURIComponent(userId)}`)
+
+                    const response = await fetch(`http://103.250.10.249:8886/speak?text=${text}&audio=${userId}`)
 
                     if (response.ok) {
                         const audioUrl = URL.createObjectURL(await response.blob())
@@ -551,37 +590,7 @@
                         if (!isAudioPlay) {
                             stopAudio()
                         }
-                        const talkFunctions = [talk, talk2] // Hapus startBlinking dari sini untuk kontrol lebih baik
-                        let count = 0 // Untuk menghitung berapa kali talk dipanggil
-                        setTimeout(() => {
-                            const talkInterval = setInterval(() => {
-                                const randomFunction = talkFunctions[Math.floor(Math.random() * talkFunctions.length)]
-                                randomFunction() // Panggil fungsi yang dipilih secara acak
 
-                                // Cek waktu sebelum memanggil startBlinking
-                                const currentTime = Date.now()
-                                if (currentTime - lastBlinkTime > 5000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
-                                    startBlinking()
-                                    lastBlinkTime = currentTime // Update waktu terakhir blink
-                                }
-                                if (currentTime - lastBlinkTime2 > 6000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
-                                    startBlinking()
-                                    lastBlinkTime2 = currentTime // Update waktu terakhir blink
-                                }
-                                if (currentTime - lastNutateTime > 4000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
-                                    nutate()
-                                    lastNutateTime = currentTime // Update waktu terakhir blink
-                                }
-                                // Tunggu hingga audio selesai diputar
-                                var audiotag = document.getElementById("audio")
-                                audiotag.addEventListener('ended', () => {
-                                    console.log('Audio finished playing')
-                                    clearInterval(talkInterval)
-                                    basicMove()
-                                    // Lakukan sesuatu setelah audio selesai, misalnya reset animasi
-                                })
-                            }, 300) // Setiap 300ms
-                        }, 200)
 
                     } else {
                         console.error('Error fetching audio:', response.statusText)
@@ -608,6 +617,42 @@
                 return video.paused
             }
 
+            var audiotag = document.getElementById("audio")
+            audiotag.addEventListener('play', () => {
+                console.log('Audio started playing')
+                const talkFunctions = [talk, talk2] // Hapus startBlinking dari sini untuk kontrol lebih baik
+                let count = 0 // Untuk menghitung berapa kali talk dipanggil
+                setTimeout(() => {
+                    const talkInterval = setInterval(() => {
+                        const randomFunction = talkFunctions[Math.floor(Math.random() * talkFunctions.length)]
+                        randomFunction() // Panggil fungsi yang dipilih secara acak
+
+                        // Cek waktu sebelum memanggil startBlinking
+                        const currentTime = Date.now()
+                        if (currentTime - lastBlinkTime > 5000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
+                            startBlinking()
+                            lastBlinkTime = currentTime // Update waktu terakhir blink
+                        }
+                        if (currentTime - lastBlinkTime2 > 6000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
+                            startBlinking()
+                            lastBlinkTime2 = currentTime // Update waktu terakhir blink
+                        }
+                        if (currentTime - lastNutateTime > 4000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
+                            nutate()
+                            lastNutateTime = currentTime // Update waktu terakhir blink
+                        }
+                        // Tunggu hingga audio selesai diputar
+                        var audiotag = document.getElementById("audio")
+                        audiotag.addEventListener('ended', () => {
+                            console.log('Audio finished playing')
+                            clearInterval(talkInterval)
+                            basicMove()
+                            // Lakukan sesuatu setelah audio selesai, misalnya reset animasi
+                        })
+                    }, 300) // Setiap 300ms
+                }, 200)
+                // Lakukan sesuatu setelah audio selesai, misalnya reset animasi
+            })
             function removeBehaviorsRestrictions() {
                 for (var i = 0; i < audioElements.length; i++) {
                     audioElements[i].load()
@@ -943,6 +988,47 @@
             setTimeout(() => {
                 basicMove()
             }, 1000)
+
+            // const startButton = document.getElementById('startButton')
+            // const outputDiv = document.getElementById('output')
+            // const transcriptInput = document.getElementById('messageInput')
+
+            // const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)()
+            // recognition.lang = 'id-ID'
+            // recognition.interimResults = true // Enable interim results
+
+            // let silenceTimer // Timer untuk mendeteksi keheningan
+
+            // recognition.onstart = () => {
+            //     startButton.textContent = 'Listening...'
+            // }
+
+            // recognition.onresult = (event) => {
+            //     const transcript = event.results[event.resultIndex][0].transcript // Get the latest transcript
+            //     // outputDiv.textContent += ' ' + transcript // Tambahkan teks baru ke output
+            //     transcriptInput.value = transcript // Simpan hasil transcript di input
+            //     resetSilenceTimer() // Reset timer saat berbicara
+            // }
+
+            // recognition.onend = () => {
+            //     startButton.textContent = 'Start Voice Input'
+            //     // Automatically restart recognition
+            //     recognition.start()
+            // }
+
+            // startButton.addEventListener('click', () => {
+            //     recognition.start()
+            //     resetSilenceTimer() // Mulai timer saat tombol ditekan
+            // })
+
+            // function resetSilenceTimer() {
+            //     clearTimeout(silenceTimer) // Hapus timer sebelumnya
+            //     silenceTimer = setTimeout(() => {
+            //         recognition.stop() // Hentikan pengenalan suara setelah 3 detik hening
+            //         startButton.textContent = 'Voice Input Stopped'
+            //     }, 3000) // 3000ms = 3 detik
+            // }
+
         </script>
         <script src="%PRISMJS_PATH%"></script> <!-- Include the Prism JS for syntax highlighting functionality -->
         <div id="avatar">
@@ -951,6 +1037,8 @@
                     <option value="play">Play Audio</option>
                     <option value="mute">Mute Audio</option>
                 </select>
+                <button id="startButton" class="hidden">Speak</button>
+                <div id="output" class="hidden">Start</div>
             </div>
 
         </div>
