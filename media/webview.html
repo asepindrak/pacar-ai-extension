@@ -408,6 +408,8 @@
                 }
             }
 
+            var isAudioPlay = true
+
             function displayMessages(messages) {
                 const content = document.getElementById('content')
                 content.innerHTML = ''
@@ -507,7 +509,7 @@
 
                 if (talkDuration > 0) {
                     let talking = talkDuration / 4
-                    if (talkMessage.length < 300) {
+                    if (talkMessage.length < 300 && isAudioPlay) {
                         startTalking(talking, talkMessage)
                     }
                 }
@@ -559,7 +561,6 @@
 
             }
 
-            var isAudioPlay = true
 
             var audioElements = document.getElementsByTagName('audio'),
                 sounds = {}
