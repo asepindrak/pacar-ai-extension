@@ -543,10 +543,10 @@
             // Memanggil talk selama 50 detik
 
             async function startTalking(maxTalks, message) {
-                let talk = await translate(message)
+                // let talk = await translate(message) // disable translate to japanese
 
                 console.log(talk)
-                document.getElementById('talkText').value = talk
+                document.getElementById('talkText').value = message
                 document.getElementById('maxTalks').value = maxTalks
                 setTimeout(() => {
                     document.getElementById('speakButton').click()
