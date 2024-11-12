@@ -507,7 +507,9 @@
 
                 if (talkDuration > 0) {
                     let talking = talkDuration / 4
-                    startTalking(talking, talkMessage)
+                    if (talkMessage.length < 1000) {
+                        startTalking(talking, talkMessage)
+                    }
                 }
 
                 content.appendChild(chatContainer)
@@ -572,7 +574,9 @@
                     let text = document.getElementById('talkText').value
                     const userId = localStorage.getItem("userId")
 
-                    const response = await fetch(`http://103.250.10.249:8886/speak?text=${text}&audio=${userId}`)
+                    // const response = await fetch(`http://127.0.0.1:8000/speak?text=${text}&audio=${userId}`)
+                    // const response = await fetch(`http://127.0.0.1:7000/speak?text=${text}`)
+                    const response = await fetch(`http://103.250.10.249:8886/speak?text=${text}`)
 
                     if (response.ok) {
                         const audioUrl = URL.createObjectURL(await response.blob())
