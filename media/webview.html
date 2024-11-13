@@ -829,6 +829,25 @@
                 }
                 renderer.render(scene, camera)
             }
+            var lastBlinkTime3 = 0
+            var lastBlinkTime4 = 0
+            var lastNutateTime2 = 0
+            function blinkAndNutate() {
+                const currentTime = Date.now()
+                if (currentTime - lastBlinkTime3 > 5000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
+                    startBlinking()
+                    lastBlinkTime3 = currentTime // Update waktu terakhir blink
+                }
+                if (currentTime - lastBlinkTime4 > 6000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
+                    startBlinking()
+                    lastBlinkTime4 = currentTime // Update waktu terakhir blink
+                }
+                if (currentTime - lastNutateTime2 > 4000) { // Hanya panggil startBlinking jika 2 detik sudah berlalu
+                    nutate()
+                    lastNutateTime2 = currentTime // Update waktu terakhir blink
+                }
+            }
+
             function nutate() {
                 resetAnimate()
                 nutateId = requestAnimationFrame(nutate)
@@ -993,6 +1012,11 @@
             setTimeout(() => {
                 basicMove()
             }, 1000)
+            setTimeout(() => {
+                const talkInterval = setInterval(() => {
+                    blinkAndNutate()
+                }, 5000)
+            }, 2000)
 
             // const startButton = document.getElementById('startButton')
             // const outputDiv = document.getElementById('output')
