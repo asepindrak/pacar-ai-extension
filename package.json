@@ -106,6 +106,7 @@
   },
   "dependencies": {
     "@pixiv/three-vrm": "^3.1.5",
-    "simple-audio": "^1.0.1"
+    "simple-audio": "^1.0.1",
+    "three": "^0.170.0"
   }
 }
