@@ -6,6 +6,9 @@
 
 ### Added
 
+### 1.4.3
+- **Feature**: 3D model with voice
+
 ### 1.4.2
 - **Style**: Redesign avatar UI
 

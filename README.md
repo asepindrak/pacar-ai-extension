@@ -20,6 +20,9 @@ Get help with coding problems, syntax errors, and best practices.
 **Roleplay with AI**  
 Enjoy conversations with your AI companion, making coding less lonely and more engaging. 
 
+**3D Model with Voice**  
+Interactive 3D avatar responds with speech.
+
 **Interactive Chat**  
 Communicate with Pacar AI in real-time. Ask questions and receive instant responses. 
 
@@ -65,6 +68,9 @@ This extension is licensed under the MIT License. See the LICENSE file for detai
 
 
 ## Release Notes
+
+### 1.4.3
+- **Feature**: 3D model with voice
 
 ### 1.4.2
 - **Style**: Redesign avatar UI
