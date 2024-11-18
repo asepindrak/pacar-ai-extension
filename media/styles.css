@@ -364,7 +364,7 @@ code {
 
 .fixed-bottom {
     position: fixed;
-    bottom: 220px;
+    bottom: 0;
     left: 0;
     right: 0;
     width: 100%;
@@ -497,7 +497,7 @@ button:active {
     max-width: 100%;
     font-size: 14px;
     overflow-y: auto;
-    height: calc(100% - 300px);
+    height: calc(100%);
     width: 100%;
     margin-bottom: 50px;
     overflow-wrap: break-word;
@@ -604,12 +604,23 @@ canvas {
     z-index: 1;
 }
 
+#avatar-container {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    width: 150px !important;
+    height: 150px !important;
+    z-index: 99999;
+}
+
 #avatar {
     position: fixed;
-    left: 0;
-    bottom: 0;
-    height: 250px;
-    z-index: 99999;
+    left: 10px;
+    top: 10px;
+    width: 150px !important;
+    height: 150px !important;
+    border: 3px solid #222;
+    border-radius: 10px;
 }
 
 .h-12.p-2.flex.items-center.justify-center.bg-red-500.hover\:bg-red-600.text-white.rounded {

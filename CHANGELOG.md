@@ -6,6 +6,9 @@
 
 ### Added
 
+### 1.4.2
+- **Style**: Redesign avatar UI
+
 ### 1.4.1
 - **Chore**: Change api audio
 

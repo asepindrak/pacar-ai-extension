@@ -11,9 +11,8 @@
         <style>
             #avatar {
                 background: url('%BACKGROUND%') !important;
-                width: 100% !important;
-                background-repeat: no-repeat;
-                background-size: contain;
+                background-repeat: no-repeat !important;
+                background-size: cover !important;
             }
         </style>
     </head>
@@ -78,19 +77,35 @@
                     let allCode = messageText.allCode || "" // Menggunakan operator logika OR untuk inisialisasi
 
                     const allCodeStorageKey = 'allCodeStorage' // Define a key for storing all code in local storage
+                    const codingStorageKey = 'codingStorage' // Define a key for storing all code in local storage
                     const storedAllCode = localStorage.getItem(allCodeStorageKey)
+                    const storedCoding = localStorage.getItem(codingStorageKey)
 
                     if (storedAllCode === allCode) {
                         allCode = "" // Reset allCode jika sama dengan yang disimpan
+                    }
+                    if (storedCoding === coding) {
+                        coding = "" // Reset allCode jika sama dengan yang disimpan
                     }
 
                     // Save all code to local storage only if it's not empty
                     if (allCode) {
                         localStorage.setItem(allCodeStorageKey, allCode)
                         console.log("All code saved to local storage.")
+
+
                     } else {
                         console.log("No allCode to save.")
                     }
+
+                    // Save all code to local storage only if it's not empty
+                    if (coding) {
+                        localStorage.setItem(codingStorageKey, coding)
+                        console.log("Coding saved to local storage.")
+                    } else {
+                        console.log("No coding to save.")
+                    }
+
 
                     const messageInput = document.getElementById('messageInput')
                     // Menghapus spasi di awal dan akhir pada load
@@ -276,7 +291,7 @@
                 if (history.length > 0) {
                     const historyTitle = document.createElement('h3')
                     historyTitle.className = 'text-center text-gray-100'
-                    historyTitle.textContent = 'Select Pacar AI:'
+                    historyTitle.textContent = 'Pacar AI: v1.4.2'
                     historyContainer.appendChild(historyTitle)
 
                     const historyList = document.createElement('div')
@@ -368,11 +383,62 @@
 
                 localStorage.setItem('historyId', item.id)
                 localStorage.setItem('character', item.character)
+                localStorage.setItem('gender', item.gender)
 
                 localStorage.setItem('avatar', item.avatar)
+                const divAvatar = document.getElementById("avatar-container")
+                divAvatar.classList.remove("hidden")
                 loadMessages(item.id)
+                let avatar = item.avatar
+                avatar = avatar.replaceAll("images", "3d")
+                avatar = avatar.replaceAll("png", "vrm")
+                avatar = avatar.replaceAll("jpg", "vrm")
+                // await to check if this url https://chat.pacar-ai.my.id/${avatar} exist
+                // Check if the avatar URL exists
+                let avatarUrl = `https://chat.pacar-ai.my.id/${avatar}`
+                const avatarExists = await checkUrlExists(avatarUrl)
+                if (!avatarExists) {
+                    avatarUrl = `https://chat.pacar-ai.my.id/3d/${item.gender.toLowerCase()}/1.vrm`
+                }
+                // Load the avatar if the URL exists
+                loader.load(
+                    avatarUrl,
+                    (gltf) => {
+                        const vrm = gltf.userData.vrm
+
+                        // Optimize VRM model
+                        VRMUtils.removeUnnecessaryVertices(gltf.scene)
+                        VRMUtils.removeUnnecessaryJoints(gltf.scene)
+
+                        // Disable frustum culling for better performance
+                        vrm.scene.traverse((obj) => {
+                            obj.frustumCulled = false
+                        })
+
+                        // Add VRM to the scene
+                        scene.add(vrm.scene)
+                        // Rotate model to face forward
+                        vrm.scene.rotation.y = Math.PI // Rotate 180 degrees on Y-axis
+                        // Optionally add BoxHelper to see the model's bounding box
+                        const boxHelper = new THREE.BoxHelper(vrm.scene, 0xffff00)
+                        // scene.add(boxHelper);
+
+                        currentVrm = vrm // Set the current VRM to the loaded model
+                    },
+                    (progress) => console.log('Loading model...', 100.0 * (progress.loaded / progress.total), '%'),
+                    (error) => console.error(error)
+                )
             }
 
+            async function checkUrlExists(url) {
+                try {
+                    const response = await fetch(url, { method: 'HEAD' })
+                    return response.ok // Return true if the response is OK (status 200)
+                } catch (error) {
+                    console.error('Error checking URL:', error)
+                    return false // Return false if there was an error
+                }
+            }
 
 
             async function loadMessages(historyId) {
@@ -420,7 +486,7 @@
                 let talkMessage = ""
                 messages.forEach((msg, index) => {
                     if (msg.role !== 'system') {
-                        const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`|\[selection\][\s\S]*?\[selection\]|\[fullcode\][\s\S]*?\[fullcode\]|\[labelInstruction\][\s\S]*?\[labelInstruction\])/g)
+                        const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`|\[selection\][\s\S]*?\[selection\]|\[fullcode\][\s\S]*?\[fullcode\]|\[labelInstruction\][\s\S]*?\[labelInstruction\]|\[files\][\s\S]*?\[files\])/g)
 
                         const messageDiv = document.createElement('div')
                         messageDiv.className = `mb-2 flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`
@@ -443,6 +509,8 @@
                             } else if (part.startsWith('[fullcode]') && part.endsWith('[fullcode]')) {
                                 //skip
                             } else if (part.startsWith('[labelInstruction]') && part.endsWith('[labelInstruction]')) {
+                                //skip
+                            } else if (part.startsWith('[files]') && part.endsWith('[files]')) {
                                 //skip
                             } else if (part.startsWith('```') && part.endsWith('```')) {
 
@@ -549,7 +617,7 @@
             async function startTalking(maxTalks, message) {
                 // let talk = await translate(message) // disable translate to japanese
 
-                console.log(talk)
+                // console.log(talk)
                 document.getElementById('talkText').value = message
                 document.getElementById('maxTalks').value = maxTalks
                 setTimeout(() => {
@@ -695,7 +763,7 @@
             }
 
             document.getElementById('audioControl').addEventListener('change', function () {
-                console.log(this.value)
+                // console.log(this.value)
                 const selectedValue = this.value
                 const audiotag = document.getElementById('audio')
 
@@ -717,21 +785,22 @@
 
             // renderer
             const renderer = new THREE.WebGLRenderer()
-            renderer.setSize(window.innerWidth, window.innerHeight)
+            renderer.setSize(150, 150)
             renderer.setPixelRatio(window.devicePixelRatio)
             //background
             renderer.setClearColor(0x1f1f1f, 0) // Warna latar belakang dengan transparansi
             var avatardiv = document.getElementById("avatar")
+            avatardiv.innerHTML = ""
             avatardiv.appendChild(renderer.domElement)
 
-            // camera
-            const camera = new THREE.PerspectiveCamera(30.0, window.innerWidth / window.innerHeight, 0.1, 20.0)
-            camera.position.set(0.0, 1.0, 2.5)
+            // Kamera
+            const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 20)
+            camera.position.set(0, 1.4, 1) // Sesuaikan posisi kamera
 
-            // camera controls
+            // Kontrol Kamera
             const controls = new OrbitControls(camera, renderer.domElement)
             controls.screenSpacePanning = true
-            controls.target.set(0.0, 1.0, 0.0)
+            controls.target.set(0, 1.5, 0) // Target kamera ke tengah scene
             controls.update()
 
 
@@ -751,34 +820,12 @@
             loader.register((parser) => {
                 return new VRMLoaderPlugin(parser)
             })
+            let gender = localStorage.getItem("gender")
+            let avatar = localStorage.getItem("avatar")
+            console.log("gender", gender)
+            console.log("avatar", avatar)
 
-            loader.load(
-                '%CHARA%',
-                (gltf) => {
-                    const vrm = gltf.userData.vrm
 
-                    // calling these functions greatly improves the performance
-                    VRMUtils.removeUnnecessaryVertices(gltf.scene)
-                    VRMUtils.removeUnnecessaryJoints(gltf.scene)
-
-                    // Disable frustum culling
-                    vrm.scene.traverse((obj) => {
-                        obj.frustumCulled = false
-                    })
-
-                    // Tambahkan VRM ke scene
-                    scene.add(vrm.scene)
-                    // Rotasi model agar menghadap ke depan
-                    vrm.scene.rotation.y = Math.PI // Memutar 180 derajat di sumbu Y
-                    // Tambahkan BoxHelper untuk melihat bounding box model
-                    const boxHelper = new THREE.BoxHelper(vrm.scene, 0xffff00)
-                    // scene.add(boxHelper)
-
-                    currentVrm = vrm
-                },
-                (progress) => console.log('Loading model...', 100.0 * (progress.loaded / progress.total), '%'),
-                (error) => console.error(error)
-            )
 
             // helpers
             const gridHelper = new THREE.GridHelper(10, 10)
@@ -1060,8 +1107,11 @@
 
         </script>
         <script src="%PRISMJS_PATH%"></script> <!-- Include the Prism JS for syntax highlighting functionality -->
-        <div id="avatar">
-            <div id="stopAudioContainer" class="flex justify-center mt-4 fixed-button">
+        <div id="avatar-container" class="hidden">
+            <div id="avatar">
+
+            </div>
+            <div id="stopAudioContainer" class="flex justify-center mt-4">
                 <select id="audioControl" class="h-12 p-2 flex items-center justify-center text-white bg-grey rounded">
                     <option value="play">Play Audio</option>
                     <option value="mute">Mute Audio</option>
@@ -1069,7 +1119,6 @@
                 <button id="startButton" class="hidden">Speak</button>
                 <div id="output" class="hidden">Start</div>
             </div>
-
         </div>
 
     </body>

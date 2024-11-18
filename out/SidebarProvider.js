@@ -84,6 +84,7 @@ class SidebarProvider {
         htmlContent = htmlContent.replace('%STYLES_PATH%', stylesPath.toString());
         htmlContent = htmlContent.replace('%PRISM_PATH%', prismPath.toString());
         htmlContent = htmlContent.replace('%PRISMJS_PATH%', prismJSPath.toString());
+        console.log(chara.toString());
         htmlContent = htmlContent.replace('%CHARA%', chara.toString());
         htmlContent = htmlContent.replace('%VRM%', vrm.toString());
         htmlContent = htmlContent.replace('%AUDIO%', audio.toString());
