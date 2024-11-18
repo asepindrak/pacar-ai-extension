@@ -6,6 +6,9 @@
 
 ### Added
 
+### 1.4.4
+- **Chore**: Change label voice option
+
 ### 1.4.3
 - **Feature**: 3D model with voice
 

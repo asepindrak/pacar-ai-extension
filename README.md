@@ -71,6 +71,9 @@ This extension is licensed under the MIT License. See the LICENSE file for detai
 
 ## Release Notes
 
+### 1.4.4
+- **Chore**: Change label voice option
+
 ### 1.4.3
 - **Feature**: 3D model with voice
 
