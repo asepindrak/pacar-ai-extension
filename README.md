@@ -53,8 +53,9 @@ Effortlessly extend your code by leveraging the AI's understanding of your comme
 
 1. **Open the Chat**: Click on the Pacar AI icon in the sidebar to open the chat window. 
 2. **Register to Pacar AI Web**: Click on the Pacar AI Register Link. 
-3. **Start Chatting**: Type your questions or messages, and Pacar AI will respond. 
-4. **Get Assistance**: Ask coding-related questions or seek emotional support and motivation.
+3. **Back to Extension**: Click on the Pacar AI icon, and login. 
+4. **Start Chatting**: Type your questions or messages, and Pacar AI will respond. 
+5. **Get Assistance**: Ask coding-related questions or seek emotional support and motivation.
 
 
 ## Contributing 
