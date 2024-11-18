@@ -24,7 +24,7 @@
         <button id="speakButton" class="hidden">speak</button>
         <input id="talkText" class="hidden" />
         <input id="maxTalks" class="hidden" />
-        <audio id="audio" class="welcome" autoplay>
+        <audio id="audio" class="welcome" autoplay muted>
             <source id="audiosource" src="%AUDIO%" />
         </audio>
         <div id="messageInputContainer" class="p-4 bg-black shadow-md fixed-bottom" style="display: none;">
@@ -291,7 +291,7 @@
                 if (history.length > 0) {
                     const historyTitle = document.createElement('h3')
                     historyTitle.className = 'text-center text-gray-100'
-                    historyTitle.textContent = 'Pacar AI: v1.4.2'
+                    historyTitle.textContent = 'Pacar AI: v1.4.5'
                     historyContainer.appendChild(historyTitle)
 
                     const historyList = document.createElement('div')
@@ -656,6 +656,7 @@
                         }
                         if (isAudioPlay) {
                             var audiotag = document.getElementById("audio")
+                            audiotag.muted = false
                             audiotag.volume = 1
                         }
                         playSound('welcome')

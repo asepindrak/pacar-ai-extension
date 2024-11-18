@@ -6,6 +6,9 @@
 
 ### Added
 
+### 1.4.5
+- **Fix**: Remove welcome message
+
 ### 1.4.4
 - **Chore**: Change label voice option
 
