@@ -151,10 +151,12 @@
 
             async function sendMessageToApi(message) {
                 let newMessageArray = [...messageArray, { role: 'user', message: message }]
-                displayMessagesAssistant({ role: 'user', message: message })
                 const historyId = localStorage.getItem('historyId')
                 const userId = localStorage.getItem('userId')
                 const character = localStorage.getItem('character')
+
+                let uniqueId = Date.now() + Math.random()
+                displayMessagesAssistant({ role: 'user', message: message, uniqueId })
 
                 const data = {
                     historyId,
@@ -182,17 +184,22 @@
 
                     let assistantMessage = '' // Variabel untuk menyimpan pesan assistant
                     const assistantRole = 'assistant' // Role untuk pesan assistant
+                    let isFirst = true
+                    // uniqueId
+                    let uniqueId = Date.now() + Math.random()
                     while (!done) {
                         const { value, done: doneReading } = await reader.read()
                         done = doneReading
                         // Decode dan tambahkan ke assistantMessage
                         assistantMessage += decoder.decode(value, { stream: true })
-                        console.log('assistantMessage', assistantMessage) // You can process each chunk here }
-                        displayMessagesAssistant({ role: assistantRole, message: assistantMessage })
+                        if (isFirst) {
+                            isFirst = false
+                            displayMessagesAssistant({ role: assistantRole, message: assistantMessage, uniqueId })
+                        } else {
+                            updateMessagesAssistant({ role: assistantRole, message: assistantMessage, uniqueId })
+                        }
                     }
                     messageArray = [...messageArray, { role: assistantRole, message: assistantMessage }]
-                    console.log('talkMessage', talkMessage)
-                    console.log('talkMessage', talkDuration)
                     if (talkDuration > 0) {
                         let talking = talkDuration / 4
                         if (assistantMessage.length < 300 && isAudioPlay) {
@@ -615,6 +622,7 @@
 
 
                 content.appendChild(chatContainer)
+                content.scrollTop = content.scrollHeight
             }
 
             function displayMessagesAssistant(msg) {
@@ -638,6 +646,7 @@
                 const messageContent = document.createElement('div')
                 messageContent.className = `inline-block p-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-grey text-grey-100'}`
                 messageContent.style.whiteSpace = 'pre-wrap'
+                messageContent.id = msg.uniqueId
 
                 parts.forEach((part, i) => {
                     if (part.startsWith('[selection]') && part.endsWith('[selection]')) {
@@ -654,7 +663,7 @@
 
                         const codeLines = codeContent.split('\n')
                         const firstLine = codeLines[0].trim()
-                        const languageRegex = /^(javascript|python|java|c\+\+|c#|ruby|go|php|typescript|swift|kotlin|json|jsx|tsx|html|css|xml|c|rust|perl|r|bash)$/i
+                        const languageRegex = /^(nginx|dockerfile|javascript|python|java|c\+\+|c#|ruby|go|php|typescript|swift|kotlin|json|jsx|tsx|html|css|xml|c|rust|perl|r|bash)$/i
 
                         if (languageRegex.test(firstLine)) {
                             codeContent = codeLines.slice(1).join('\n').trim() // Remove the first line if it matches a language
@@ -701,6 +710,78 @@
                 messageDiv.appendChild(messageContent)
                 chatContainer.appendChild(messageDiv)
                 content.appendChild(chatContainer)
+                content.scrollTop = content.scrollHeight
+            }
+
+            function updateMessagesAssistant(msg) {
+
+                const parts = msg.message.split(/(```[\s\S]*?```|`[^`]+`|\[selection\][\s\S]*?\[selection\]|\[fullcode\][\s\S]*?\[fullcode\]|\[labelInstruction\][\s\S]*?\[labelInstruction\]|\[files\][\s\S]*?\[files\])/g)
+
+
+                const messageContent = document.getElementById(msg.uniqueId)
+                messageContent.innerHTML = ''
+                parts.forEach((part, i) => {
+                    if (part.startsWith('[selection]') && part.endsWith('[selection]')) {
+                        //skip
+                    } else if (part.startsWith('[fullcode]') && part.endsWith('[fullcode]')) {
+                        //skip
+                    } else if (part.startsWith('[labelInstruction]') && part.endsWith('[labelInstruction]')) {
+                        //skip
+                    } else if (part.startsWith('[files]') && part.endsWith('[files]')) {
+                        //skip
+                    } else if (part.startsWith('```') && part.endsWith('```')) {
+
+                        let codeContent = part.slice(3, -3).trim()
+
+                        const codeLines = codeContent.split('\n')
+                        const firstLine = codeLines[0].trim()
+                        const languageRegex = /^(nginx|dockerfile|javascript|python|java|c\+\+|c#|ruby|go|php|typescript|swift|kotlin|json|jsx|tsx|html|css|xml|c|rust|perl|r|bash)$/i
+
+                        if (languageRegex.test(firstLine)) {
+                            codeContent = codeLines.slice(1).join('\n').trim() // Remove the first line if it matches a language
+                        }
+
+                        const codeDiv = document.createElement('div')
+                        codeDiv.className = 'p-2 rounded-lg mb-2 wrap'
+
+                        const pre = document.createElement('pre')
+
+                        const code = document.createElement('code')
+                        code.className = `language-${firstLine}` // Menambahkan kelas bahasa
+                        code.textContent = codeContent
+                        pre.appendChild(code)
+
+                        codeDiv.appendChild(pre)
+
+                        Prism.highlightElement(code)
+
+                        const copyButton = document.createElement('button')
+                        copyButton.textContent = 'Copy'
+                        copyButton.className = 'mt-2 bg-blue-500 text-white px-2 py-1 rounded'
+                        copyButton.onclick = () => handleCopy(codeContent)
+                        codeDiv.appendChild(copyButton)
+
+                        messageContent.appendChild(codeDiv)
+                    } else if (part.startsWith('`') && part.endsWith('`')) {
+                        const inlineCode = part.slice(1, -1)
+                        const codeSpan = document.createElement('code')
+                        codeSpan.className = 'bg-gray-800 text-white p-1 rounded'
+                        codeSpan.textContent = inlineCode
+                        messageContent.appendChild(codeSpan)
+                        talkDuration += part.length
+                        talkMessage = `${talkMessage}. ${part}`
+                    } else {
+                        const textSpan = document.createElement('span')
+                        textSpan.textContent = part
+                        messageContent.appendChild(textSpan)
+                        talkDuration += part.length
+                        talkMessage = `${talkMessage}. ${part}`
+                    }
+                })
+
+                const content = document.getElementById('content')
+                content.scrollTop = content.scrollHeight
+
             }
 
             async function translate(text) {

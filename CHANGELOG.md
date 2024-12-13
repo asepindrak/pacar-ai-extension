@@ -6,6 +6,9 @@
 
 ### Added
 
+### 1.4.6
+- **Fix**: Stream response from API
+
 ### 1.4.5
 - **Fix**: Remove welcome message
 

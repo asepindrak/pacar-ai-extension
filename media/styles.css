@@ -157,6 +157,10 @@ iframe {
     /* 8px */
 }
 
+.block {
+    display: block !important;
+}
+
 pre,
 code {
     white-space: pre-wrap !important;
