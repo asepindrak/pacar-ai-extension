@@ -56,6 +56,21 @@ class SidebarProvider {
                     webviewView.webview.postMessage({ text: '' });
                 }
             }
+            else if (message.command === 'applyCodeSelection') {
+                const editor = vscode.window.activeTextEditor;
+                // console.log("apply code from chat", message.code);
+                if (editor) {
+                    const selection = editor.selection;
+                    editor.edit(editBuilder => {
+                        // Ganti teks yang dipilih dengan kode baru
+                        editBuilder.replace(selection, message.code);
+                    }).then(() => {
+                        console.log('Code applied successfully!');
+                    }, (err) => {
+                        console.error('Failed to apply code:', err);
+                    });
+                }
+            }
         });
         webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
         webviewView.webview.onDidReceiveMessage(message => {

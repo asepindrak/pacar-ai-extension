@@ -71,6 +71,9 @@ This extension is licensed under the MIT License. See the LICENSE file for detai
 
 ## Release Notes
 
+### 1.4.7
+- **Feature**: Text Styling & Apply Code from Chat
+
 ### 1.4.6
 - **Fix**: Stream response from API
 

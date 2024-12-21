@@ -254,6 +254,11 @@ code {
     /* Blue */
 }
 
+.bg-blue-300 {
+    background-color: #13366e;
+    /* Blue */
+}
+
 .text-white {
     color: white;
 }
@@ -349,6 +354,10 @@ code {
 
 .hover\:bg-blue-600:hover {
     background-color: #2563eb;
+}
+
+.hover\:bg-blue-300:hover {
+    background-color: #1f4494;
 }
 
 .rounded {

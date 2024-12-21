@@ -18,6 +18,23 @@ export function activate(context: vscode.ExtensionContext) {
 			sidebarProvider
 		)
 	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('pacar-ai.applyCodeSelection', (code) => {
+			const editor = vscode.window.activeTextEditor;
+			console.log("apply code from chat");
+			if (editor) {
+				const selection = editor.selection;
+				editor.edit(editBuilder => {
+					// Ganti teks yang dipilih dengan kode baru
+					editBuilder.replace(selection, code);
+				}).then(() => {
+					console.log('Code applied successfully!');
+				}, (err) => {
+					console.error('Failed to apply code:', err);
+				});
+			}
+		})
+	);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('pacar-ai.triggerCompletion', () => {
