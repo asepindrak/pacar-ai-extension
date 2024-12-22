@@ -29,7 +29,7 @@
         </audio>
         <div id="messageInputContainer" class="p-4 bg-black shadow-md fixed-bottom" style="display: none;">
             <div class="flex items-center">
-                <textarea id="messageInput" placeholder="Type your message..."
+                <textarea id="messageInput" placeholder="Ask Pacar AI"
                     class="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-6 bg-black text-white">
                 </textarea>
                 <button id="sendMessageButton"
@@ -43,6 +43,11 @@
                         <circle class="path" cx="12" cy="12" r="10" fill="none" stroke-width="4" />
                     </svg>
                 </button>
+            </div>
+            <div class="flex">
+                <div id="div-code-selected" class="flex mt-2">
+                </div>
+                <div id="generating" class="mt-2 ml-2 border border-1 p-2"></div>
             </div>
         </div>
         <script type="importmap">
@@ -75,6 +80,35 @@
                 messageInput.addEventListener('keydown', handleKeyDown)
 
                 window.addEventListener('message', async event => {
+                    const messageEvent = event.data
+
+                    if (messageEvent.command == 'updateFileInfo') {
+                        if (messageEvent.filePath) {
+
+
+                            document.getElementById('div-code-selected').innerHTML = `
+                            <div id="fileOpen"
+                                class="flex file-open p-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <span id="filePath"></span><span class="fs-6" id="selectedLine"></span>
+                                <span id="svg-eye"></span>
+                            </div>`
+
+                            document.getElementById('filePath').textContent = messageEvent.filePath
+                            document.getElementById('selectedLine').textContent = ': ' + messageEvent.selectedLine + ' Current file'
+                            document.getElementById('svg-eye').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="eye" fill="white" class="icon">
+                                <path
+                                    d="M21.92,11.6C19.9,6.91,16.1,4,12,4S4.1,6.91,2.08,11.6a1,1,0,0,0,0,.8C4.1,17.09,7.9,20,12,20s7.9-2.91,9.92-7.6A1,1,0,0,0,21.92,11.6ZM12,18c-3.17,0-6.17-2.29-7.9-6C5.83,8.29,8.83,6,12,6s6.17,2.29,7.9,6C18.17,15.71,15.17,18,12,18ZM12,8a4,4,0,1,0,4,4A4,4,0,0,0,12,8Zm0,6a2,2,0,1,1,2-2A2,2,0,0,1,12,14Z">
+                                </path>
+                            </svg>`
+                        } else {
+                            document.getElementById('div-code-selected').innerHTML = ""
+                            document.getElementById('filePath').textContent = ""
+                            document.getElementById('selectedLine').textContent = ""
+                            document.getElementById('svg-eye').innerHTML = ""
+                        }
+                        return
+                    }
+
                     const messageText = event.data // Menerima pesan dari extension
                     let coding = messageText.text || "" // Menggunakan operator logika OR untuk inisialisasi
                     let allCode = messageText.allCode || "" // Menggunakan operator logika OR untuk inisialisasi
@@ -137,6 +171,7 @@
             }
 
             async function handleSendMessage() {
+                document.getElementById('generating').innerHTML = "Generating..."
                 const sendMessageButton = document.getElementById('button-send')
                 const loader = document.getElementById('loader')
 
@@ -214,6 +249,8 @@
 
                     loader.classList.add('hidden') // Sembunyikan loader
                     sendMessageButton.classList.remove('hidden') // Tampilkan tombol kembali
+
+                    document.getElementById('generating').innerHTML = ""
                     data.assistantMessage = assistantMessage
                     const responsePost = await fetch('https://chat.pacar-ai.my.id/api/messages', {
                         method: 'PUT',

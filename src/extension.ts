@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { SidebarProvider } from './SidebarProvider';
+import * as path from 'path';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -18,6 +19,41 @@ export function activate(context: vscode.ExtensionContext) {
 			sidebarProvider
 		)
 	);
+
+	// Register a command to update the webview with the current file and line information
+	context.subscriptions.push(
+		vscode.commands.registerCommand('pacar-ai.updateWebview', () => {
+			const editor = vscode.window.activeTextEditor;
+			if (editor) {
+				const filePath = editor.document.fileName;
+				const fileName = path.basename(filePath); // Dapatkan nama file saja
+				const selection = editor.selection;
+				const startLine = selection.start.line + 1; // Line numbers are 0-based
+				const endLine = selection.end.line + 1; // Line numbers are 0-based
+				const webview = sidebarProvider._view;
+				if (webview) {
+					webview.webview.postMessage({
+						command: 'updateFileInfo',
+						filePath: fileName, // Kirim nama file saja
+						selectedLine: `${startLine}-${endLine}` // Kirim rentang baris yang dipilih
+					});
+				}
+			}
+		})
+	);
+
+	// Trigger the updateWebview command when the active editor changes or the selection changes
+	vscode.window.onDidChangeActiveTextEditor(() => {
+		vscode.commands.executeCommand('pacar-ai.updateWebview');
+	});
+	vscode.window.onDidChangeTextEditorSelection(() => {
+		vscode.commands.executeCommand('pacar-ai.updateWebview');
+	});
+
+	// Initial trigger to update the webview
+	vscode.commands.executeCommand('pacar-ai.updateWebview');
+
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand('pacar-ai.applyCodeSelection', (code) => {
 			const editor = vscode.window.activeTextEditor;

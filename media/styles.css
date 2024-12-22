@@ -426,6 +426,11 @@ code {
     /* 8px */
 }
 
+.p-1 {
+    padding: 0.2rem;
+    /* 8px */
+}
+
 .p-2 {
     padding: 0.5rem;
     /* 8px */
@@ -512,7 +517,7 @@ button:active {
     overflow-y: auto;
     height: calc(100%);
     width: 100%;
-    margin-bottom: 50px;
+    margin-bottom: 80px;
     overflow-wrap: break-word;
     /* Break long words */
     word-wrap: break-word;
@@ -668,4 +673,19 @@ canvas {
 
 #audioControl {
     opacity: 0.7;
+}
+
+.file-open {
+    display: flex;
+    align-items: center;
+}
+
+.file-open .icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+}
+
+.fs-6 {
+    font-size: 10px !important;
 }

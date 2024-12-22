@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
-  private _view?: vscode.WebviewView;
+  public _view?: vscode.WebviewView;
 
   constructor(private readonly _extensionUri: vscode.Uri, private readonly context: vscode.ExtensionContext) { }
 
@@ -46,6 +46,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             console.error('Failed to apply code:', err);
           });
         }
+      } else if (message.command === 'updateFileInfo') {
+        this.updateFileInfo(message.filePath, message.selectedLine);
       }
     });
 
@@ -63,6 +65,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       undefined,
       this.context.subscriptions
     );
+  }
+
+  private updateFileInfo(filePath: string, selectedLine: number) {
+    if (this._view) {
+      this._view.webview.postMessage({
+        command: 'updateFileInfo',
+        filePath: filePath,
+        selectedLine: selectedLine
+      });
+    }
   }
 
   private getHtmlForWebview(webview: vscode.Webview): string {

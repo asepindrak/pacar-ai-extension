@@ -71,6 +71,9 @@ class SidebarProvider {
                     });
                 }
             }
+            else if (message.command === 'updateFileInfo') {
+                this.updateFileInfo(message.filePath, message.selectedLine);
+            }
         });
         webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
         webviewView.webview.onDidReceiveMessage(message => {
@@ -81,6 +84,15 @@ class SidebarProvider {
                     return;
             }
         }, undefined, this.context.subscriptions);
+    }
+    updateFileInfo(filePath, selectedLine) {
+        if (this._view) {
+            this._view.webview.postMessage({
+                command: 'updateFileInfo',
+                filePath: filePath,
+                selectedLine: selectedLine
+            });
+        }
     }
     getHtmlForWebview(webview) {
         const htmlPath = path.join(this._extensionUri.fsPath, 'media', 'webview.html');

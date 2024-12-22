@@ -6,6 +6,9 @@
 
 ### Added
 
+### 1.4.8
+- **Feature**: View Current file open & selected in chat input
+
 ### 1.4.7
 - **Feature**: Text Styling & Apply Code from Chat
 
