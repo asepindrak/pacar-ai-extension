@@ -6,6 +6,9 @@
 
 ### Added
 
+### 1.4.9
+- **Chore**: Change variable character
+
 ### 1.4.8
 - **Feature**: View Current file open & selected in chat input
 

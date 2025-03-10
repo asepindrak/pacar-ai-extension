@@ -71,6 +71,9 @@ This extension is licensed under the MIT License. See the LICENSE file for detai
 
 ## Release Notes
 
+### 1.4.9
+- **Chore**: Change variable character
+
 ### 1.4.8
 - **Feature**: View Current file open & selected in chat input
 

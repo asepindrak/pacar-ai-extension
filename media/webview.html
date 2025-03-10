@@ -397,7 +397,7 @@
                         name.textContent = item.name
                         const status = document.createElement('div')
                         status.className = 'text-sm text-blue-600 mt-2'
-                        status.textContent = `${item.status} ${item.character}`
+                        status.textContent = `${item.status} ${item.characterName}`
                         nameContainer.appendChild(name)
                         nameContainer.appendChild(status)
 
@@ -463,7 +463,7 @@
             async function handleHistorySelect(item) {
 
                 localStorage.setItem('historyId', item.id)
-                localStorage.setItem('character', item.character)
+                localStorage.setItem('character', item.characterName)
                 localStorage.setItem('gender', item.gender)
 
                 localStorage.setItem('avatar', item.avatar)
